@@ -1,68 +1,60 @@
 ﻿using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Threading.Tasks;
 
-namespace ImageToPaintblockConverter {
+namespace ImageToPaintBlockConverter {
     class Settings {
-        public static String version = "1.3.1";
-        public static String consoleTitle = "Image To Paintblock Converter v."+version;
+        public static String version = "v1.4.0";
+        public static String windowTitle = "Converter " + version;
 
-        public static String settingsFileName = "ImageToPaintblockConverterSettings_" + version + ".txt";
-        public static String vehicleName = "";
-        public static String vehicleFilePath = "";
+        public static int windowWidth = 400;
+        public static int windowHeight = 215;
 
-        public static void CheckForSettingsFile() {
-            if (File.Exists(Settings.settingsFileName)) {
-                LoadSettings();
-                return;
-            }
-            else {
-                Console.WriteLine("Settings File Not Found. Generating File...");
-                StreamWriter output = File.CreateText(Settings.settingsFileName);
-                output.Write(settingsDefaultContents);
-                output.Close();
+        public static String settingsFilePath = "PaintblockConverterSettings.xml";
 
-                LoadSettings();
+        public static String vehicleFolderPath = "";
+        public static String vehicleOutputName = "";
 
-                Console.WriteLine("The settings file contains the filepath for the stormworks vehicles folder. If it is not \"" + Settings.vehicleFilePath + "\" close the program and change it.");
-                Console.WriteLine("Press any key to continue.");
-                Console.ReadKey();
-                return;
-            }
+        public static void LoadSettings() {
+            if(!File.Exists(settingsFilePath)) GenerateNewSettings();
+            XmlDocument xml = new XmlDocument();
+            xml.Load(settingsFilePath);
+            XmlNodeList settings = xml.SelectNodes("/data/setting");
+            if(!String.Equals(settings[0].Attributes[0].Value,version)) { GenerateNewSettings();LoadSettings(); }
+            vehicleFolderPath = settings[1].Attributes[0].Value;
+            vehicleOutputName = settings[2].Attributes[0].Value;
         }
 
-        static void LoadSettings() {
-            
-            //Settings Order:
-            // vehicle path (string)
-            // vehicle name (string)
-            // overwrite file (bool)
-
-            String[] fileContents = File.ReadAllLines(Settings.settingsFileName);
-            ArrayList settings = new ArrayList();
-            for (int i = 0; i < fileContents.Length; i++) {
-                String line = fileContents[i];
-                if (line.Contains("SETTING:")) {
-                    line = line.Substring(line.IndexOf("\"") + 1);
-                    line = line.Substring(0, line.IndexOf("\""));
-                    settings.Add(line);
-                }
-            }
-
-            Settings.vehicleFilePath = settings[0].ToString();
-            if (String.Equals(settings[2].ToString(), "true")) {
-                Settings.vehicleName = settings[1].ToString();
-            } else {
-                Settings.vehicleName = settings[1].ToString() + DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-            }
+        public static void UpdateSettings(int settingIndex, String value) {
+            XmlDocument xml = new XmlDocument();
+            xml.Load(settingsFilePath);
+            XmlNodeList settings = xml.SelectNodes("/settings/setting");
+            settings[settingIndex].Attributes[0].Value = value;
+            xml.Save(settingsFilePath);
         }
 
-        static String settingsDefaultContents =
-            "SETTING: VehicleFileOutputPath=\"C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\Stormworks\\data\\vehicles\\\"\n" +
-            "SETTING: VehicleFileOutputName=\"Generated.xml\"\n" +
-            "\n" +
-            "If \"OverwriteVehicleFile\" is set to \"false\", the program adds a unix timestamp to the end of the a generated vehicles filename to make sure no two files are named the same. Make sure to enter either \"true\" or \"false\" in the setting\n" +
-            "SETTING: OverwriteVehicleFile=\"true\"\n" +
-            "";
+        public static void GenerateNewSettings() {
+            XmlDocument settings = new XmlDocument();
+            XmlNode rootNode = settings.CreateElement("data");
+            settings.AppendChild(rootNode);
+
+            AddXMLNode("setting", "version", version);
+            AddXMLNode("setting","vehicleFolderPath", @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Stormworks\data\vehicles\");
+            AddXMLNode("setting", "vehicleOutputName","Generated.xml");
+
+            settings.Save(settingsFilePath);
+
+            void AddXMLNode(String element,String name,String value) {
+                XmlNode node = settings.CreateElement(element);
+                XmlAttribute attribute = settings.CreateAttribute(name);
+                attribute.Value = value;
+                node.Attributes.Append(attribute);
+                rootNode.AppendChild(node);
+            }
+        }
     }
 }
