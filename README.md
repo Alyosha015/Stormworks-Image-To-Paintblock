@@ -1,26 +1,6 @@
 # Stormworks Image To Paintblock Converter
 A program to convert an images to both types of stormworks paintblocks.
 
-## v1.5 Changes
-### Features
-#### v1.5.2
-* Removed windows ding sound when entering value in number input/text box.
-* Added Custom Height mode, which is similar to the Custom Width mode.
-* Refactored code for resizing images, hopefully without bugs.
-#### v1.5.0
-* The converter now works with transparent images.
-* The converter now supports paintable indicators, and allows setting seperate images for the background and glowing parts of the block. The boolean and electrical logic for them is also automatically generated.
-* Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
-* The settings window is also run on a seperate thread.
-### Bugfixes
-#### v1.5.1
-* Don't Resize Mode cutting off edge of image when one of the images dimensions is divisible by 9 and the other isn't.
-* Glow image not resizing if Background Image was selected then unselected.
-#### v1.5.0
-* Clicking the button to save settings crashing the program.
-* Window looking messed up when screen scaling is not 125%.
-* Generate XML button enabled when no mode is selected.
-
 ## Usage/Tutorial
 ![ImageConverterGUI](https://user-images.githubusercontent.com/99307745/177545181-5d521895-9be5-4cae-bf57-22b3e91f9023.png)
 1. Run the program.
@@ -67,3 +47,23 @@ Really good example of the benifits of the optimization setting for blueprints.
 ### Optimization Not Used
 For comparison on the loss of quality with the previous images.
 ![0threshold](https://user-images.githubusercontent.com/99307745/159141301-bdbf06d6-5dce-4ba9-8caf-7bc47678e8f0.png)
+
+## v1.5 Changes
+### Features
+#### v1.5.2
+* Removed windows ding sound when entering value in number input/text box.
+* Added Custom Height mode, which is similar to the Custom Width mode.
+* Refactored code for resizing images, hopefully without bugs.
+#### v1.5.0
+* The converter now works with transparent images.
+* The converter now supports paintable indicators, and allows setting seperate images for the background and glowing parts of the block. The boolean and electrical logic for them is also automatically generated.
+* Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
+* The settings window is also run on a seperate thread.
+### Bugfixes
+#### v1.5.1
+* Don't Resize Mode cutting off edge of image when one of the images dimensions is divisible by 9 and the other isn't.
+* Glow image not resizing if Background Image was selected then unselected.
+#### v1.5.0
+* Clicking the button to save settings crashing the program.
+* Window looking messed up when screen scaling is not 125%.
+* Generate XML button enabled when no mode is selected.
