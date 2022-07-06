@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace ImageToPaintBlockConverter {
     class Settings {
-        public static String version = "v1.5.0";
+        public static String version = "v1.5.1";
         public static String windowTitle = "Converter " + version;
 
         public static float scale = 1;

@@ -1,13 +1,17 @@
 # Stormworks Image To Paintblock Converter
 A program to convert an images to both types of stormworks paintblocks.
 
-## v1.5.0 Changes
+## v1.5 Changes
 ### New Features/Changes
 * The converter now works with transparent images.
 * The converter now supports paintable indicators, and allows setting seperate images for the background and glowing parts of the block. The boolean and electrical logic for them is also automatically generated.
 * Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
 * The settings window is also run on a seperate thread.
 ### Bugfixes
+#### v1.5.1
+* Don't Resize Mode cutting off edge of image when one of the images dimensions is divisible by 9 and the other isn't.
+* Glow image not resizing if Background Image was selected then unselected.
+#### v1.5.0
 * Clicking the button to save settings crashing the program.
 * Window looking messed up when screen scaling is not 125%.
 * Generate XML button enabled when no mode is selected.
@@ -16,7 +20,7 @@ A program to convert an images to both types of stormworks paintblocks.
 ![ImageConverterGUI](https://user-images.githubusercontent.com/99307745/177545181-5d521895-9be5-4cae-bf57-22b3e91f9023.png)
 1. Run the program.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
-3. Choose a mode for the paintblock converter with the dropdown in the top left. (The different modes are explained below this tutorial in "Conversion Modes And Image Resizing", but you will most likely be using ```Custom Width```) 
+3. Choose a mode for the paintblock converter with the dropdown in the top left. (The different modes are explained below this tutorial in "Conversion Modes And Image Resizing") 
 #### If you're not using paintable indicators:
 4. Click ```Select File``` and choose the image to import in the file chooser.
 5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
@@ -44,8 +48,8 @@ This feature is most useful for importing blueprints, which usually have large b
 * The program uses a xml file to store a file path to the stormworks vehicle folder, as well as the name for a generated vehicle, and is automatically generated in the same directory as the program if it is not found. The default file path is ``C:\Users\%username%\AppData\Roaming\Stormworks\data\vehicles\``. (The username is filled in when generated, you don't have to change it yourself.)
 
 ## Examples Of Optimization Used
-### B-52 Bomber with threshold set to 1, and blocks painted black.
-Really good example of the benifits of the optimization setting with blueprints.
+### B-52 Bomber with threshold set to 1, and blocks repainted black.
+Really good example of the benifits of the optimization setting for blueprints.
 ![B52 Imported](https://user-images.githubusercontent.com/99307745/177476542-5cd5221a-34c7-4d00-9e14-1254c2156e4f.png)
 
 ### Threshold set to 15

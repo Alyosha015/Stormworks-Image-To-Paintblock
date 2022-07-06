@@ -253,7 +253,7 @@ namespace ImageToPaintBlockConverter {
             controls.Controls.Add(openSettings);
 
             modes.SelectedIndexChanged += new EventHandler((object o, EventArgs a) => {
-                if (modes.SelectedIndex != 0) generate.Enabled = true;
+                if (modes.SelectedIndex != 0 && (backgroundSelected || glowSelected)) generate.Enabled = true;
                 else generate.Enabled = false;
                 WidthHeightButtonLogic();
             });
@@ -306,7 +306,7 @@ namespace ImageToPaintBlockConverter {
 
                     }
                 }
-                else { backgroundSelected = false; backgroundImage = new Bitmap(1, 1); }
+                else { backgroundSelected = false; backgroundImage = new Bitmap(1, 1); if (glowSelected) backgroundImage = new Bitmap(glowImage); }
                 WidthHeightButtonLogic();
                 if ((backgroundSelected || (glowSelected && useGlow.Checked)) && modes.SelectedIndex != 0) generate.Enabled = true;
                 else generate.Enabled = false;
