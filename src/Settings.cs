@@ -1,15 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
-using System.Threading.Tasks;
 
 namespace ImageToPaintBlockConverter {
     class Settings {
-        public static String version = "v1.4.0";
+        public static String version = "v1.5.0";
         public static String windowTitle = "Converter " + version;
+
+        public static float scale = 1;
 
         public static int windowWidth = 400;
         public static int windowHeight = 215;
@@ -20,19 +18,26 @@ namespace ImageToPaintBlockConverter {
         public static String vehicleOutputName = "";
 
         public static void LoadSettings() {
-            if(!File.Exists(settingsFilePath)) GenerateNewSettings();
+            if (!File.Exists(settingsFilePath)) GenerateNewSettings();
             XmlDocument xml = new XmlDocument();
             xml.Load(settingsFilePath);
             XmlNodeList settings = xml.SelectNodes("/data/setting");
-            if(!String.Equals(settings[0].Attributes[0].Value,version)) { GenerateNewSettings();LoadSettings(); }
-            vehicleFolderPath = settings[1].Attributes[0].Value;
-            vehicleOutputName = settings[2].Attributes[0].Value;
+            try {
+                if (!String.Equals(settings[0].Attributes[0].Value, version)) { GenerateNewSettings();}
+                vehicleFolderPath = settings[1].Attributes[0].Value;
+                vehicleOutputName = settings[2].Attributes[0].Value;
+                scale = float.Parse(settings[3].Attributes[0].Value.ToString());
+                windowWidth = (int)(400 * scale);
+                windowHeight = (int)(215 * scale);
+            } catch(Exception e) {
+                GenerateNewSettings();
+            }
         }
 
         public static void UpdateSettings(int settingIndex, String value) {
             XmlDocument xml = new XmlDocument();
             xml.Load(settingsFilePath);
-            XmlNodeList settings = xml.SelectNodes("/settings/setting");
+            XmlNodeList settings = xml.SelectNodes("/data/setting");
             settings[settingIndex].Attributes[0].Value = value;
             xml.Save(settingsFilePath);
         }
@@ -45,6 +50,7 @@ namespace ImageToPaintBlockConverter {
             AddXMLNode("setting", "version", version);
             AddXMLNode("setting","vehicleFolderPath", @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Stormworks\data\vehicles\");
             AddXMLNode("setting", "vehicleOutputName","Generated.xml");
+            AddXMLNode("setting", "scale", "1");
 
             settings.Save(settingsFilePath);
 
