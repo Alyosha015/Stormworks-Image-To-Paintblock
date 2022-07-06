@@ -403,7 +403,7 @@ namespace ImageToPaintBlockConverter {
                 if(modes.SelectedIndex == 3) {
                     Bitmap glowImageResized = new Bitmap(1, 1);
                     if (glow) glowImageResized = new Bitmap(glowImage, backgroundImage.Width, backgroundImage.Height);
-                    if(backgroundImage.Width%9!=0 && backgroundImage.Height%9!=0) {
+                    if(backgroundImage.Width%9!=0 || backgroundImage.Height%9!=0) {
                         backgroundBitmap = new Bitmap((int)(Math.Ceiling((double)backgroundImage.Width / 9) * 9), (int)(Math.Ceiling((double)backgroundImage.Height / 9) * 9));
                         Graphics gBackground = Graphics.FromImage(backgroundBitmap);
                         if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, backgroundImage.Width, backgroundImage.Height));
