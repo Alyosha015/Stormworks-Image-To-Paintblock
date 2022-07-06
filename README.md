@@ -2,7 +2,12 @@
 A program to convert an images to both types of stormworks paintblocks.
 
 ## v1.5 Changes
-### New Features/Changes
+### Features
+#### v1.5.2
+* Removed windows ding sound when entering value in number input/text box.
+* Added Custom Height mode, which is similar to the Custom Width mode.
+* Refactored code for resizing images, hopefully without bugs.
+#### v1.5.0
 * The converter now works with transparent images.
 * The converter now supports paintable indicators, and allows setting seperate images for the background and glowing parts of the block. The boolean and electrical logic for them is also automatically generated.
 * Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
@@ -33,8 +38,9 @@ A program to convert an images to both types of stormworks paintblocks.
 
 ## Conversion Modes And Image Resizing
 1. ```Custom Dimensions``` - Width and Height can be choosen by user, and the image is stretched to fit the new dimensions.
-2. ```Custom Width``` - Custom Width only allows a width to be entered, and calculates a new height to keep the aspect ratio of the image. This mode can leave a black bar at the bottom of the generated paintblocks if the height didn't evenly fit into paintblocks.
-3. ```Don't Resize``` - Copies the image pixel for pixel onto paintblocks, and can leave black bars on the bottom and side of the generated paintblocks if it didn't evenly fit.
+2. ```Custom Width``` - Custom Width only allows a width to be entered, and calculates a new height to keep the aspect ratio of the image. This mode can leave a black bar on the bottom of the generated paintblocks if the height of the image didn't evenly fit into paintblocks.
+3. ```Custom Height``` - Custom Height only allows a height to be entered, and calculates a new width to keep the aspect ratio of the image. This mode can leave a black bar on the side of the generated paintblocks if the width of the image didn't evenly fit into paintblocks.
+4. ```Don't Resize``` - Copies the image pixel for pixel onto paintblocks, and can leave black bars on the bottom and side of the generated paintblocks if it didn't evenly fit.
 * If you are generating paintable indicators, there is a chance your background image and glow image will have different resolutions/aspect ratios. If a background image is selected, the glow image is resized and stretched to be the same sized as the background image. If no background image is selected, the glow image will be resized directly instead.
 
 ## How Optimizing Works

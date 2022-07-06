@@ -51,6 +51,7 @@ namespace ImageToPaintBlockConverter {
             modes.Items.Add("Select Mode");
             modes.Items.Add("Custom Dimensions");
             modes.Items.Add("Custom Width");
+            modes.Items.Add("Custom Height");
             modes.Items.Add("Don't Resize");
             modes.SelectedIndex = 0;
 
@@ -93,6 +94,9 @@ namespace ImageToPaintBlockConverter {
             width.Enabled = false;
             width.BorderStyle = BorderStyle.None;
             settings.Controls.Add(width);
+            width.KeyDown += (object o, KeyEventArgs a) => {
+                if(a.KeyCode==Keys.Enter) a.SuppressKeyPress = true;
+            };
 
             //height
             Label heightLabel = new Label();
@@ -115,6 +119,9 @@ namespace ImageToPaintBlockConverter {
             height.Enabled = false;
             height.BorderStyle = BorderStyle.None;
             settings.Controls.Add(height);
+            height.KeyDown += (object o, KeyEventArgs a) => {
+                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
+            };
 
             //use threshold checkbox
             Label useThresholdLabel = new Label();
@@ -191,6 +198,9 @@ namespace ImageToPaintBlockConverter {
             threshold.Enabled = false;
             threshold.BorderStyle = BorderStyle.None;
             settings.Controls.Add(threshold);
+            threshold.KeyDown += (object o, KeyEventArgs a) => {
+                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
+            };
 
             //controls
             Panel controls = new Panel();
@@ -259,6 +269,10 @@ namespace ImageToPaintBlockConverter {
             });
 
             width.ValueChanged += new EventHandler((object o, EventArgs a) => {
+                WidthHeightButtonLogic();
+            });
+
+            height.ValueChanged += new EventHandler((object o, EventArgs a) => {
                 WidthHeightButtonLogic();
             });
 
@@ -335,8 +349,9 @@ namespace ImageToPaintBlockConverter {
                 else selectGlowFile.ForeColor = Color.FromArgb(220, 220, 220);
             });
 
-            //this turned into spagehetti code, im sorry to anyone trying to understand it in advance.
+            //(v.1.5.0) this turned into spagehetti code, im sorry to anyone trying to understand it in advance.
             //goodluck!
+            //(v1.5.2) good news, I kinda fixed it.
             generate.Click += new EventHandler((object o, EventArgs a) => {
                 generate.Text = "Generating...";
                 generate.Enabled = false;
@@ -352,81 +367,46 @@ namespace ImageToPaintBlockConverter {
                 bool glow = useGlow.Checked;
 
                 double aspectRatio = (double)backgroundImage.Height / (double)backgroundImage.Width;
-                int newY = (int)(aspectRatio * (double)width.Value * 9);
-                
-                Bitmap backgroundBitmap = new Bitmap(1,1);
-                Bitmap glowBitmap = new Bitmap(1,1);
+                int newY = (int)(((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)width.Value * 9);
+                int newX = (int)(((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)height.Value * 9);
 
-                //Custom dimensions mode
-                if(modes.SelectedIndex == 1) {
-                    Bitmap backgroundImageResized = new Bitmap(backgroundImage, (int)width.Value * 9, (int)height.Value * 9);
-                    backgroundBitmap = new Bitmap((int)width.Value * 9, (int)height.Value * 9);
-                    Graphics gBackground = Graphics.FromImage(backgroundBitmap);
-                    if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, backgroundImageResized.Width, backgroundImageResized.Height));
-                    gBackground.DrawImage(backgroundImageResized, 0, 0, backgroundImageResized.Width, backgroundImageResized.Height);
-                    if (glow) {
-                        glowBitmap = new Bitmap(backgroundBitmap.Width, backgroundBitmap.Height);
-                        Bitmap glowImageResized = new Bitmap(glowImage, (int)width.Value * 9, (int)height.Value * 9);
-                        Graphics gGlow = Graphics.FromImage(glowBitmap);
-                        gGlow.DrawImage(glowImageResized, 0, 0, glowImageResized.Width, glowImageResized.Height);
+                //bitmap storing image after processing (resizing/adding white background)
+                Bitmap backgroundResized = new Bitmap(1, 1);
+                Bitmap glowResized = new Bitmap(1, 1);
+
+                //bitmap fed into generator
+                Bitmap backgroundBitmap = new Bitmap(1, 1);
+                Bitmap glowBitmap = new Bitmap(1, 1);
+
+                //resizes images based on mode
+                if(modes.SelectedIndex==1) { //custom dimensions mode
+                    backgroundResized = new Bitmap(backgroundImage, (int)width.Value * 9, (int)height.Value * 9);
+                    if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
+                } else if(modes.SelectedIndex==2) { //custom width mode
+                    backgroundResized = new Bitmap(backgroundImage, (int)width.Value * 9, newY);
+                    if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
+                } else if (modes.SelectedIndex == 3) { //custom height mode
+                    backgroundResized = new Bitmap(backgroundImage, newX, (int)height.Value * 9);
+                    if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
+                } else if (modes.SelectedIndex == 4) { //don't resize mode
+                    backgroundResized = new Bitmap(backgroundImage);
+                    if(glow) {
+                        if (glow) glowResized = new Bitmap(glowImage, backgroundImage.Width, backgroundImage.Height);
                     }
                 }
-                //Custom Width mode
-                if(modes.SelectedIndex == 2) {
-                    Bitmap backgroundImageResized = new Bitmap(backgroundImage,(int)width.Value * 9, newY);
-                    Bitmap glowImageResized = new Bitmap(1, 1);
-                    if (glow) glowImageResized = new Bitmap(glowImage,(int)width.Value * 9, newY);
-                    //image needs height corrected
-                    if(backgroundImageResized.Height%9!=0) {
-                        backgroundBitmap = new Bitmap(backgroundImageResized.Width, newY + 9);
-                        Graphics gBackground = Graphics.FromImage(backgroundBitmap);
-                        if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, newY % 9, backgroundImageResized.Width, backgroundImageResized.Height));
-                        gBackground.DrawImage(backgroundImageResized, 0, newY % 9, backgroundImageResized.Width, backgroundImageResized.Height);
-                        if(glow) {
-                            glowBitmap = new Bitmap(backgroundBitmap.Width, backgroundBitmap.Height);
-                            Graphics gGlow = Graphics.FromImage(glowBitmap);
-                            gGlow.DrawImage(glowImageResized, 0, newY % 9, glowImageResized.Width, glowImageResized.Height);
-                        }
-                    } else {
-                        backgroundBitmap = new Bitmap(backgroundImageResized.Width,backgroundImageResized.Height);
-                        Graphics gBackground = Graphics.FromImage(backgroundBitmap);
-                        if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0,0, backgroundImageResized.Width, backgroundImageResized.Height));
-                        gBackground.DrawImage(backgroundImageResized, 0, 0, backgroundImageResized.Width, backgroundImageResized.Height);
-                        if (glow) {
-                            glowBitmap = new Bitmap(backgroundBitmap.Width, backgroundBitmap.Height);
-                            Graphics gGlow = Graphics.FromImage(glowBitmap);
-                            gGlow.DrawImage(glowImageResized, 0, 0, glowImageResized.Width, glowImageResized.Height);
-                        }
-                    }
-                }
-                //no resize mode
-                if(modes.SelectedIndex == 3) {
-                    Bitmap glowImageResized = new Bitmap(1, 1);
-                    if (glow) glowImageResized = new Bitmap(glowImage, backgroundImage.Width, backgroundImage.Height);
-                    if(backgroundImage.Width%9!=0 || backgroundImage.Height%9!=0) {
-                        backgroundBitmap = new Bitmap((int)(Math.Ceiling((double)backgroundImage.Width / 9) * 9), (int)(Math.Ceiling((double)backgroundImage.Height / 9) * 9));
-                        Graphics gBackground = Graphics.FromImage(backgroundBitmap);
-                        if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, backgroundImage.Width, backgroundImage.Height));
-                        gBackground.DrawImage(backgroundImage, 0, 0, backgroundImage.Width, backgroundImage.Height);
-                        if(glow) {
-                            glowBitmap = new Bitmap((int)(Math.Ceiling((double)backgroundImage.Width / 9) * 9), (int)(Math.Ceiling((double)backgroundImage.Height / 9) * 9));
-                            Graphics gGlow = Graphics.FromImage(glowBitmap);
-                            gGlow.DrawImage(glowImageResized, 0, 0, glowImageResized.Width, glowImageResized.Height);
-                        }
-                    } else {
-                        backgroundBitmap = new Bitmap(backgroundImage.Width,backgroundImage.Height);
-                        Graphics gBackground = Graphics.FromImage(backgroundBitmap);
-                        if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, backgroundImage.Width, backgroundImage.Height));
-                        gBackground.DrawImage(backgroundImage, 0, 0, backgroundImage.Width, backgroundImage.Height);
-                        if (glow) {
-                            glowBitmap = new Bitmap(backgroundBitmap.Width, backgroundBitmap.Height);
-                            Graphics gGlow = Graphics.FromImage(glowBitmap);
-                            gGlow.DrawImage(glowImageResized, 0, 0, glowImageResized.Width, glowImageResized.Height);
-                        }
-                    }
+                //draw image onto background, add which where image is incase the image is transparent, and a border if the width or height is not divisible by 9.
+                backgroundBitmap = new Bitmap((int)(Math.Ceiling((double)backgroundResized.Width / 9) * 9), (int)(Math.Ceiling((double)backgroundResized.Height / 9) * 9));
+                Graphics gBackground = Graphics.FromImage(backgroundBitmap);
+                if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, backgroundResized.Width, backgroundResized.Height));
+                gBackground.DrawImage(backgroundResized,0,0,backgroundResized.Width,backgroundResized.Height);
+
+                if(glow) {
+                    glowBitmap = new Bitmap(backgroundBitmap.Width, backgroundBitmap.Height);
+                    Graphics gGlow = Graphics.FromImage(glowBitmap);
+                    gGlow.DrawImage(glowResized,0,0,glowResized.Width,glowResized.Height);
                 }
 
-                if (!backgroundSelected) { glowBitmap = new Bitmap(backgroundBitmap); backgroundBitmap = new Bitmap(1,1); }
+                if(!backgroundSelected) { glowBitmap = new Bitmap(backgroundBitmap); backgroundBitmap = new Bitmap(1,1); }
                 //generate the vehicle on a separate thread from the window so that the window doesn't freeze.
                 ThreadStart starter = GenerateXML;
                 starter += () => { //runs when thread is finished
@@ -472,8 +452,15 @@ namespace ImageToPaintBlockConverter {
                         double newHeight = ((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)width.Value*9;
                         height.Value = (int)Math.Ceiling(Math.Floor(newHeight)/9);
                     }
-                    //no resize
+                    //Custom Height
                     if(modes.SelectedIndex == 3) {
+                        width.Enabled = false;
+                        height.Enabled = true;
+                        double newWidth = ((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)height.Value * 9;
+                        width.Value = (int)Math.Ceiling(Math.Floor(newWidth) / 9);
+                    }
+                    //no resize
+                    if (modes.SelectedIndex == 4) {
                         width.Enabled = false;
                         height.Enabled = false;
                         width.Value = (int)Math.Ceiling((double)backgroundImage.Width / 9);

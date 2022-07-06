@@ -40,6 +40,10 @@ namespace ImageToPaintBlockConverter {
                 tooltip.SetToolTip(stormworksVehicleFolderPath, "The filepath to the stormworks vehicle folder.");
             });
 
+            stormworksVehicleFolderPath.KeyDown += (object o, KeyEventArgs a) => {
+                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
+            };
+
             TextBox stormworksVehicleName = new TextBox();
             stormworksVehicleName.Font = new Font("", 10 * fontCorrection);
             stormworksVehicleName.Text = Settings.vehicleOutputName;
@@ -52,6 +56,10 @@ namespace ImageToPaintBlockConverter {
             stormworksVehicleName.MouseHover += new EventHandler((object o, EventArgs a) => {
                 tooltip.SetToolTip(stormworksVehicleName, "The name of the generated vehicle.");
             });
+
+            stormworksVehicleName.KeyDown += (object o, KeyEventArgs a) => {
+                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
+            };
 
             //scale
             Label scaleLabel = new Label();
@@ -75,6 +83,9 @@ namespace ImageToPaintBlockConverter {
             scale.Maximum = 5;
             scale.BorderStyle = BorderStyle.None;
             this.Controls.Add(scale);
+            scale.KeyDown += (object o, KeyEventArgs a) => {
+                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
+            };
 
             Button close = new Button();
             close.Font = new Font("", 10 * fontCorrection);
