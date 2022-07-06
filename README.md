@@ -13,6 +13,7 @@ A program to convert an images to both types of stormworks paintblocks.
 * Generate XML button enabled when no mode is selected.
 
 ## Usage/Tutorial
+![ImageConverterGUI](https://user-images.githubusercontent.com/99307745/177545181-5d521895-9be5-4cae-bf57-22b3e91f9023.png)
 1. Run the program.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
 3. Choose a mode for the paintblock converter with the dropdown in the top left. (The different modes are explained below this tutorial in "Conversion Modes And Image Resizing", but you will most likely be using ```Custom Width```) 
