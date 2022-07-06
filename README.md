@@ -6,12 +6,12 @@ A program to convert an images to both types of stormworks paintblocks.
 1. Run the program.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
 3. Choose a mode for the paintblock converter with the dropdown in the top left. (The different modes are explained below this tutorial in "Conversion Modes And Image Resizing") 
-#### If you're not using paintable indicators:
+#### If you're generating paintable signs:
 4. Click ```Select File``` and choose the image to import in the file chooser.
 5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
 6. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for considering a block of pixels a single color and replacing it with a block. (More information in "How Optimizing Works")
 7. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
-#### If you're using paintable indicators:
+#### If you're generating paintable indicators:
 4. Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional.
 5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
 6. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
