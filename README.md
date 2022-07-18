@@ -3,23 +3,19 @@ A program to convert an images to both types of stormworks paintblocks.
 
 ## Usage/Tutorial
 ![ImageConverterGUI](https://user-images.githubusercontent.com/99307745/177545181-5d521895-9be5-4cae-bf57-22b3e91f9023.png)
-1. Run the program.
+1. Run the program. (Don't forget that the program will also generate an xml settings file in the same directory as the exe)
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
-3. Choose a mode for the paintblock converter with the dropdown in the top left. (The different modes are explained below this tutorial in "Conversion Modes And Image Resizing") 
-#### If you're generating paintable signs:
-4. Click ```Select File``` and choose the image to import in the file chooser.
+3. Choose a mode for the paintblock converter with the dropdown in the top left. (The names should be mostly self-explanatory, but the different modes are explained below in "Conversion Modes And Image Resizing") 
+4. **(If you're generating paintable signs)** Click ```Select File``` and choose the image to import in the file chooser.
+4. **(If you're generating paintable indicators)** Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional.
 5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
 6. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for considering a block of pixels a single color and replacing it with a block. (More information in "How Optimizing Works")
 7. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
-#### If you're generating paintable indicators:
-4. Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional.
-5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
-6. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
 
 ## Conversion Modes And Image Resizing
 1. ```Custom Dimensions``` - Width and Height can be choosen by user, and the image is stretched to fit the new dimensions.
-2. ```Custom Width``` - Custom Width only allows a width to be entered, and calculates a new height to keep the aspect ratio of the image. This mode can leave a black bar on the bottom of the generated paintblocks if the height of the image didn't evenly fit into paintblocks.
-3. ```Custom Height``` - Custom Height only allows a height to be entered, and calculates a new width to keep the aspect ratio of the image. This mode can leave a black bar on the side of the generated paintblocks if the width of the image didn't evenly fit into paintblocks.
+2. ```Custom Width``` - Custom Width only allows a width to be entered, and calculates a new height to keep the aspect ratio of the image. This mode can leave a black bar on the bottom of the generated paintblocks if the height of the image didn't evenly fit.
+3. ```Custom Height``` - Custom Height only allows a height to be entered, and calculates a new width to keep the aspect ratio of the image. This mode can leave a black bar on the right side of the generated paintblocks if the width of the image didn't evenly fit.
 4. ```Don't Resize``` - Copies the image pixel for pixel onto paintblocks, and can leave black bars on the bottom and side of the generated paintblocks if it didn't evenly fit.
 * If you are generating paintable indicators, there is a chance your background image and glow image will have different resolutions/aspect ratios. If a background image is selected, the glow image is resized and stretched to be the same sized as the background image. If no background image is selected, the glow image will be resized directly instead.
 
