@@ -80,7 +80,6 @@ namespace ImageToPaintBlockConverter {
                     int[][] glowPixels = new int[81][];
                     String backXMLdata = "";
                     String glowXMLdata = "";
-                    bool glowTransparent = true;
                     for (int x = 0; x < 9; x++) {
                         for (int y = 0; y < 9; y++) {
                             String bgHex = "";

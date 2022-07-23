@@ -20,14 +20,14 @@ A program to convert an images to both types of stormworks paintblocks.
 * If you are generating paintable indicators, there is a chance your background image and glow image will have different resolutions/aspect ratios. If a background image is selected, the glow image is resized and stretched to be the same sized as the background image. If no background image is selected, the glow image will be resized directly instead.
 
 ## How Optimizing Works
-* Note: This feature is only available for generating regular paintblocks, not paintable indicators.
+* Note: This feature is only available for generating paintable signs, not paintable indicators.
 
-Vehicles are optimized by replacing paintblocks with regular blocks. It can significantly reduce the lag of a vehicle in the editor and the filesize/spawn time. Optimizing works by checking if the difference between the min/max values of colors in a paintblock are within a threshold, which is set by the user. If they are, a block is generated instead of a paintblock, and its color is set to an average of the pixel colors.
+Vehicles are optimized by replacing paintblocks with regular blocks. It can significantly reduce the lag of a vehicle in the editor and the filesize/spawn time. Whether or not to use a block is determined by checking if the difference between the min/max rgb values of colors in a paintblock are within a threshold, which is set by the user. If they are, a block is generated instead of a paintblock, and its color is set to an average of the pixel colors.
 
-This feature is most useful for importing blueprints, which usually have large blank spaces. I recommend to keep the threshold at 1 for blueprints which have no noise/compression artifacts in the image, and 15-25 for images with noise, an example the ship blueprint below, where I used a threshold of 15.
+This feature is most useful for importing blueprints, which usually have large blank spaces. I recommend to keep the threshold at 1 for blueprints which have no noise/compression artifacts in the image, and 10-25 for images with noise, for example the ship blueprint below, where I used a threshold of 15.
 
 ## Settings File
-* The program uses a xml file to store a file path to the stormworks vehicle folder, as well as the name for a generated vehicle, and is automatically generated in the same directory as the program if it is not found. The default file path is ``C:\Users\%username%\AppData\Roaming\Stormworks\data\vehicles\``. (The username is filled in when generated, you don't have to change it yourself.)
+* The program uses an xml file to store a file path to the stormworks vehicle folder, as well as the name for a generated vehicle, and is automatically generated in the same directory as the program if it is not found. The default file path is ``C:\Users\%username%\AppData\Roaming\Stormworks\data\vehicles\``. (The username is filled in when generated, you don't have to change it yourself.)
 
 ## Examples Of Optimization Used
 ### B-52 Bomber with threshold set to 1, and blocks repainted black.
@@ -56,6 +56,8 @@ For comparison on the loss of quality with the previous images.
 * Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
 * The settings window is also run on a seperate thread.
 ### Bugfixes
+#### v1.5.3
+* Black bar appearing next to number input boxes.
 #### v1.5.1
 * Don't Resize Mode cutting off edge of image when one of the images dimensions is divisible by 9 and the other isn't.
 * Glow image not resizing if Background Image was selected then unselected.

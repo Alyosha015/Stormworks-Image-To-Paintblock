@@ -63,7 +63,7 @@ namespace ImageToPaintBlockConverter {
             this.Controls.Add(modes);
 
             modes.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(modes, "Modes for how to convert the image to paintblocks.\n 1: Custom Dimensions allows stretching the image\n 2: Custom Width keeps the aspect ratio of the image\n 3: Don't Resize copies the image pixel for pixel");
+                tooltip.SetToolTip(modes, "Modes for how to convert the image to paintblocks.\n 1: Custom Dimensions allows stretching the image\n 2: Custom Width keeps the aspect ratio of the image\n 3: Custom Height keeps the aspect ratio of the image\n 4: Don't Resize copies the image pixel for pixel");
             });
 
             //output settings
@@ -87,10 +87,9 @@ namespace ImageToPaintBlockConverter {
             width.ForeColor = Color.FromArgb(220, 220, 220);
             width.BackColor = Color.FromArgb(70, 70, 80);
             width.Location = new Point(S(65), S(5));
-            width.Size = new Size(S(125), S(20));
+            width.Size = new Size(S(115), S(20));
             width.Minimum = 1;
             width.Maximum = Int32.MaxValue;
-            width.Controls[0].Hide();
             width.Enabled = false;
             width.BorderStyle = BorderStyle.None;
             settings.Controls.Add(width);
@@ -112,10 +111,9 @@ namespace ImageToPaintBlockConverter {
             height.ForeColor = Color.FromArgb(220, 220, 220);
             height.BackColor = Color.FromArgb(70, 70, 80);
             height.Location = new Point(S(65), S(40));
-            height.Size = new Size(S(125), S(20));
+            height.Size = new Size(S(115), S(20));
             height.Minimum = 1;
             height.Maximum = Int32.MaxValue;
-            height.Controls[0].Hide();
             height.Enabled = false;
             height.BorderStyle = BorderStyle.None;
             settings.Controls.Add(height);
@@ -191,10 +189,9 @@ namespace ImageToPaintBlockConverter {
             threshold.ForeColor = Color.FromArgb(220, 220, 220);
             threshold.BackColor = Color.FromArgb(70, 70, 80);
             threshold.Location = new Point(S(90), S(95));
-            threshold.Size = new Size(S(100), S(20));
+            threshold.Size = new Size(S(90), S(20));
             threshold.Minimum = 1;
             threshold.Maximum = 255;
-            threshold.Controls[0].Hide();
             threshold.Enabled = false;
             threshold.BorderStyle = BorderStyle.None;
             settings.Controls.Add(threshold);

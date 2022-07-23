@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace ImageToPaintBlockConverter {
     class Settings {
-        public static String version = "v1.5.2";
+        public static String version = "v1.5.3";
         public static String windowTitle = "Converter " + version;
 
         public static float scale = 1;
@@ -23,12 +23,17 @@ namespace ImageToPaintBlockConverter {
             xml.Load(settingsFilePath);
             XmlNodeList settings = xml.SelectNodes("/data/setting");
             try {
-                if (!String.Equals(settings[0].Attributes[0].Value, version)) { GenerateNewSettings();}
                 vehicleFolderPath = settings[1].Attributes[0].Value;
                 vehicleOutputName = settings[2].Attributes[0].Value;
                 scale = float.Parse(settings[3].Attributes[0].Value.ToString());
                 windowWidth = (int)(400 * scale);
                 windowHeight = (int)(215 * scale);
+                if (!String.Equals(settings[0].Attributes[0].Value, version)) {
+                    UpdateSettings(0, version);
+                    UpdateSettings(1, vehicleFolderPath);
+                    UpdateSettings(2, vehicleOutputName);
+                    UpdateSettings(3, scale.ToString());
+                }
             } catch(Exception e) {
                 GenerateNewSettings();
             }
