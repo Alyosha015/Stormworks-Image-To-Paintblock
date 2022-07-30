@@ -4,10 +4,10 @@ using System.Drawing;
 
 namespace ImageToPaintBlockConverter {
     class GenerateVehicle {
-        static String stormworksVehicleBeginingData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><vehicle data_version=\"3\" bodies_id=\"0\"><authors/><bodies><body unique_id=\"0\"><components>";
-        static String stormworksVehicleEndingData = "</components></body></bodies><logic_node_links/></vehicle>";
-        static String microprocessorStart = "<c d=\"microprocessor\"><o r=\"1,0,0,0,0,-1,0,1,0\" sc=\"10\"><microprocessor_definition width=\"2\" length=\"1\" id_counter=\"3\" id_counter_node=\"2\"><nodes><n id=\"1\" component_id=\"1\"><node mode=\"1\"/></n><n id=\"2\" component_id=\"3\"><node><position x=\"1\"/></node></n></nodes><group><data><inputs/><outputs/></data><components/><components_bridge><c><object id=\"1\"><in1/><out1/></object></c><c type=\"1\"><object id=\"3\"><in1 component_id=\"1\"/><out1/></object></c></components_bridge><groups/></group></microprocessor_definition><vp ";
-        static String microprocessorEnd = "/><logic_slots><slot/><slot/></logic_slots></o></c>";
+        static string stormworksVehicleBeginingData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><vehicle data_version=\"3\" bodies_id=\"0\"><authors/><bodies><body unique_id=\"0\"><components>";
+        static string stormworksVehicleEndingData = "</components></body></bodies><logic_node_links/></vehicle>";
+        static string microprocessorStart = "<c d=\"microprocessor\"><o r=\"1,0,0,0,0,-1,0,1,0\" sc=\"10\"><microprocessor_definition width=\"2\" length=\"1\" id_counter=\"3\" id_counter_node=\"2\"><nodes><n id=\"1\" component_id=\"1\"><node mode=\"1\"/></n><n id=\"2\" component_id=\"3\"><node><position x=\"1\"/></node></n></nodes><group><data><inputs/><outputs/></data><components/><components_bridge><c><object id=\"1\"><in1/><out1/></object></c><c type=\"1\"><object id=\"3\"><in1 component_id=\"1\"/><out1/></object></c></components_bridge><groups/></group></microprocessor_definition><vp ";
+        static string microprocessorEnd = "/><logic_slots><slot/><slot/></logic_slots></o></c>";
         static int imageWidthBlocks;
         static int imageHeightBlocks;
         static StringBuilder output;
@@ -15,7 +15,8 @@ namespace ImageToPaintBlockConverter {
         static StringBuilder logicLinks;
         static int onOffNodeX;
         static int onOffNodeZ;
-        public static String GenerateXML(Bitmap image,bool optimizePaintblocks,int optimizationThreshold) {
+        //generates paintable sign images
+        public static string GenerateXML(Bitmap image,bool optimizePaintblocks,int optimizationThreshold) {
             output = new StringBuilder();
 
             imageWidthBlocks = image.Width / 9;
@@ -26,11 +27,11 @@ namespace ImageToPaintBlockConverter {
             for (int blockX=0;blockX<imageWidthBlocks;blockX++) {
                 for (int blockY=0;blockY<imageHeightBlocks;blockY++) {
                     int[][] pixels = new int[81][];
-                    String xmlColorData = "";
+                    string xmlColorData = "";
                     for(int x=0;x<9;x++) {
                         for(int y=0;y<9;y++) {
                             Color pixel=image.GetPixel(Math.Abs((blockX * 9 + x + 1) - image.Width), Math.Abs((blockY * 9 + y + 1) - image.Height));
-                            String pixelHex = ColorToHex(pixel, true);
+                            string pixelHex = ColorToHex(pixel, true);
                             pixels[x * 9 + y] = new int[] { pixel.R, pixel.G, pixel.B };
                             xmlColorData += pixelHex;
                             if (x * 9 + y != 80) xmlColorData += ",";
@@ -48,13 +49,12 @@ namespace ImageToPaintBlockConverter {
                     }
                 }
             }
-
             output.Append(stormworksVehicleEndingData);
             return output.ToString();
         }
 
-        public static String GenerateXML(Bitmap background, Bitmap glowBitmap, bool backgroundSelected) {
-            double imageDarken = 2.75;
+        //generates paintable indicator images
+        public static string GenerateXML(Bitmap background, Bitmap glowBitmap, bool darken, bool backgroundSelected) {
             output = new StringBuilder();
             logicLinks = new StringBuilder();
             imageWidthBlocks = background.Width / 9;
@@ -78,12 +78,11 @@ namespace ImageToPaintBlockConverter {
                 for (int blockY = 0; blockY < imageHeightBlocks; blockY++) {
                     int[][] backPixels = new int[81][];
                     int[][] glowPixels = new int[81][];
-                    String backXMLdata = "";
-                    String glowXMLdata = "";
+                    string backXMLdata = "";
+                    string glowXMLdata = "";
                     for (int x = 0; x < 9; x++) {
                         for (int y = 0; y < 9; y++) {
-                            String bgHex = "";
-                            String glowHex = "";
+                            string bgHex = "";
                             Color bgPixel = Color.FromArgb(0,0,0);
                             if(backgroundSelected) {
                                 bgPixel = background.GetPixel(Math.Abs((blockX * 9 + x + 1) - background.Width), Math.Abs((blockY * 9 + y + 1) - background.Height));
@@ -92,19 +91,23 @@ namespace ImageToPaintBlockConverter {
 
                             Color glowPixel = glowBitmap.GetPixel(Math.Abs((blockX * 9 + x + 1) - glowBitmap.Width), Math.Abs((blockY * 9 + y + 1) - glowBitmap.Height));
                             int alpha = glowPixel.A;
+                            //calculates rgb for transparent pixels on white background
                             glowPixel = Color.FromArgb(
                                 (int)(255 - ((double)alpha / 255) * (255 - (double)glowPixel.R)),
                                 (int)(255 - ((double)alpha / 255) * (255 - (double)glowPixel.G)),
                                 (int)(255 - ((double)alpha / 255) * (255 - (double)glowPixel.B))
                             );
+                            //special case for transparency calculation
                             if (glowPixel.R == 255 && glowPixel.G == 255 && glowPixel.B == 255 && alpha == 0) glowPixel = Color.FromArgb(0, 0, 0);
-                            glowPixel = Color.FromArgb(
-                                (int)((double)glowPixel.R / imageDarken),
-                                (int)((double)glowPixel.G / imageDarken),
-                                (int)((double)glowPixel.B / imageDarken)
-                            );
-                            glowHex = ColorToHex(glowPixel, true);
-                            if (String.Equals(glowHex, "")) glowHex = "0";
+                            if(darken) {
+                                glowPixel = Color.FromArgb(
+                                    (int)((double)glowPixel.R / Settings.darken),
+                                    (int)((double)glowPixel.G / Settings.darken),
+                                    (int)((double)glowPixel.B / Settings.darken)
+                                );
+                            }
+                            string glowHex = ColorToHex(glowPixel, true);
+                            if (string.Equals(glowHex, "")) glowHex = "0";
 
                             if (backgroundSelected) {
                                 backPixels[x * 9 + y] = new int[] { bgPixel.R, bgPixel.G, bgPixel.B };
@@ -125,7 +128,7 @@ namespace ImageToPaintBlockConverter {
             return output.ToString();
         }
 
-        static void AddPaintableIndicatorData(String backgroundColorData,String additiveColorData,int x,int z) {
+        static void AddPaintableIndicatorData(string backgroundColorData,string additiveColorData,int x,int z) {
             x -= imageHeightBlocks / 2;
             z -= imageWidthBlocks / 2;
             output.Append("<c d=\"sign\"><o r=\"1,0,0,0,1,0,0,0,1\" sc=\"6\" gc=\"");
@@ -139,7 +142,7 @@ namespace ImageToPaintBlockConverter {
             logicLinks.Append("<logic_node_link type=\"4\"><voxel_pos_0 x=\"" + (onOffNodeX-1) + "\" z=\"" + (onOffNodeZ+1) + "\"/><voxel_pos_1 x=\"" + x + "\" z=\"" + z + "\"/></logic_node_link>");
         }
 
-        static void AddPaintBlockData(String colorData, int x, int z) {
+        static void AddPaintBlockData(string colorData, int x, int z) {
             x -= imageHeightBlocks / 2;
             z -= imageWidthBlocks / 2;
             output.Append("<c d=\"sign_na\"><o r=\"1,0,0,0,1,0,0,0,1\" sc=\"6\" gc=\"");
@@ -150,7 +153,7 @@ namespace ImageToPaintBlockConverter {
             else if (x == 0 && z == 0) output.Append("\"><vp/><logic_slots><slot/></logic_slots></o></c>");
         }
 
-        static void AddBlockData(String color, int x, int z) {
+        static void AddBlockData(string color, int x, int z) {
             x -= imageHeightBlocks / 2;
             z -= imageWidthBlocks / 2;
             output.Append("<c><o r=\"1,0,0,0,1,0,0,0,1\" sc=\"6,x,x," + color + ",x,x,x");
@@ -160,11 +163,11 @@ namespace ImageToPaintBlockConverter {
             else if (x == 0 && z == 0) output.Append("\"><vp/></o></c>");
         }
 
-        static String ColorToHex(Color c, bool useWhiteSpecialCase) {
+        static string ColorToHex(Color c, bool useWhiteSpecialCase) {
             int r = c.R; int g = c.G; int b = c.B;
             if (r == 255 && g == 255 && b == 255 && useWhiteSpecialCase) return "x";
             if (r == 0 && g == 0 && b == 0) return "";
-            String hex = r.ToString("X2") + g.ToString("X2") + b.ToString("X2");
+            string hex = r.ToString("X2") + g.ToString("X2") + b.ToString("X2");
             if (r == 0 && g == 0) return hex.Substring(3);
             if (r == 0) return hex.Substring(1);
             return hex;
@@ -189,7 +192,7 @@ namespace ImageToPaintBlockConverter {
             return max;
         }
 
-        static String GetPixelAverage(int[][] pixels) {
+        static string GetPixelAverage(int[][] pixels) {
             int rAverage = (GetGreatestValue(pixels, 0) + GetSmallestValue(pixels, 0)) / 2;
             int gAverage = (GetGreatestValue(pixels, 1) + GetSmallestValue(pixels, 1)) / 2;
             int bAverage = (GetGreatestValue(pixels, 2) + GetSmallestValue(pixels, 2)) / 2;

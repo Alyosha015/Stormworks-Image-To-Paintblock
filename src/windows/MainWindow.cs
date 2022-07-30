@@ -17,6 +17,8 @@ namespace ImageToPaintBlockConverter {
             float Scale = Settings.scale;
             float dpi = this.CreateGraphics().DpiX;
             float fontCorrection = (120 / dpi) * Scale;
+            bool generatingXML = false;
+            bool settingsOpen = false;
 
             this.Icon = Icon.FromHandle(ImageToPaintBlockConverter.Properties.Resources.LogoInverted.GetHicon());
 
@@ -30,11 +32,11 @@ namespace ImageToPaintBlockConverter {
             this.MaximizeBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
-            String pathToBackground = "";
+            string pathToBackground = "";
             Bitmap backgroundImage = new Bitmap(1, 1);
             bool backgroundSelected = false;
 
-            String pathToGlow = "";
+            string pathToGlow = "";
             Bitmap glowImage = new Bitmap(1, 1);
             bool glowSelected = false;
 
@@ -135,7 +137,6 @@ namespace ImageToPaintBlockConverter {
             });
 
             CheckBox useThreshold = new CheckBox();
-            useThreshold.Font = new Font("", 9 * fontCorrection);
             useThreshold.ForeColor = Color.FromArgb(220, 220, 220);
             useThreshold.BackColor = Color.FromArgb(70, 70, 80);
             useThreshold.Location = new Point(S(80), S(70));
@@ -146,6 +147,34 @@ namespace ImageToPaintBlockConverter {
 
             useThreshold.MouseHover += new EventHandler((object o, EventArgs a) => {
                 tooltip.SetToolTip(useThreshold, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the min/max values of the colors are within the set threshold. The block's color is an average of the pixels.");
+            });
+
+            //darken (shown when glow mode is turned on)
+
+            Label darkenLabel = new Label();
+            darkenLabel.Font = new Font("", 9 * fontCorrection);
+            darkenLabel.ForeColor = Color.FromArgb(220, 220, 220);
+            darkenLabel.Location = new Point(S(5), S(70));
+            darkenLabel.Size = new Size(S(80), S(20));
+            darkenLabel.Text = "Darken?";
+            darkenLabel.Visible = false;
+            settings.Controls.Add(darkenLabel);
+            darkenLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(darkenLabel, "Darkens glow image to make it appear less bright.");
+            });
+
+            CheckBox darken = new CheckBox();
+            darken.ForeColor = Color.FromArgb(220, 220, 220);
+            darken.BackColor = Color.FromArgb(70, 70, 80);
+            darken.Location = new Point(S(80), S(70));
+            darken.Size = new Size(S(14), S(15));
+            darken.FlatStyle = FlatStyle.Flat;
+            darken.FlatAppearance.BorderSize = 0;
+            darken.Visible = false;
+            darken.Checked = true;
+            settings.Controls.Add(darken);
+            darken.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(darken, "Darkens glow image to make it appear less bright.");
             });
 
             //glow
@@ -162,9 +191,8 @@ namespace ImageToPaintBlockConverter {
             });
 
             CheckBox useGlow = new CheckBox();
-            useGlow.Font = new Font("", 9 * fontCorrection);
             useGlow.ForeColor = Color.FromArgb(220, 220, 220);
-            useThreshold.BackColor = Color.FromArgb(70, 70, 80);
+            useGlow.BackColor = Color.FromArgb(70, 70, 80);
             useGlow.Location = new Point(S(160), S(70));
             useGlow.Size = new Size(S(14), S(15));
             useGlow.FlatStyle = FlatStyle.Flat;
@@ -180,7 +208,7 @@ namespace ImageToPaintBlockConverter {
             thresholdLabel.Font = new Font("", 10 * fontCorrection);
             thresholdLabel.ForeColor = Color.FromArgb(220, 220, 220);
             thresholdLabel.Location = new Point(S(5), S(95));
-            thresholdLabel.Size = new Size(S(85), S(20));
+            thresholdLabel.Size = new Size(S(87), S(20));
             thresholdLabel.Text = "Threshold";
             settings.Controls.Add(thresholdLabel);
 
@@ -188,9 +216,9 @@ namespace ImageToPaintBlockConverter {
             threshold.Font = new Font("", 10 * fontCorrection);
             threshold.ForeColor = Color.FromArgb(220, 220, 220);
             threshold.BackColor = Color.FromArgb(70, 70, 80);
-            threshold.Location = new Point(S(90), S(95));
-            threshold.Size = new Size(S(90), S(20));
-            threshold.Minimum = 1;
+            threshold.Location = new Point(S(92), S(95));
+            threshold.Size = new Size(S(88), S(20));
+            threshold.Minimum = 0;
             threshold.Maximum = 255;
             threshold.Enabled = false;
             threshold.BorderStyle = BorderStyle.None;
@@ -260,7 +288,7 @@ namespace ImageToPaintBlockConverter {
             controls.Controls.Add(openSettings);
 
             modes.SelectedIndexChanged += new EventHandler((object o, EventArgs a) => {
-                if (modes.SelectedIndex != 0 && (backgroundSelected || glowSelected)) generate.Enabled = true;
+                if (modes.SelectedIndex != 0 && (backgroundSelected || glowSelected) && !generatingXML) generate.Enabled = true;
                 else generate.Enabled = false;
                 WidthHeightButtonLogic();
             });
@@ -283,6 +311,11 @@ namespace ImageToPaintBlockConverter {
                     selectBackgroundFile.Text = "Select Background";
 
                     useThreshold.Enabled = false;
+
+                    useThreshold.Visible = false;
+                    useThresholdLabel.Visible = false;
+                    darken.Visible = true;
+                    darkenLabel.Visible = true;
                 } else {
                     selectGlowFile.Enabled = false;
                     selectGlowFile.Visible = false;
@@ -296,6 +329,11 @@ namespace ImageToPaintBlockConverter {
                     glowImage = new Bitmap(1, 1);
 
                     useThreshold.Enabled = true;
+
+                    useThreshold.Visible = true;
+                    useThresholdLabel.Visible = true;
+                    darken.Visible = false;
+                    darkenLabel.Visible = false;
                 }
             });
 
@@ -352,13 +390,15 @@ namespace ImageToPaintBlockConverter {
             generate.Click += new EventHandler((object o, EventArgs a) => {
                 generate.Text = "Generating...";
                 generate.Enabled = false;
+                generatingXML = true;
                 //incase the image was edited since it was selected, reopen the image and recalulate the width/height in blocks incase the size changed.
                 if (File.Exists(pathToBackground) && backgroundSelected) backgroundImage = Util.ReadImage(pathToBackground);
                 if (File.Exists(pathToGlow) && glowSelected) glowImage = Util.ReadImage(pathToGlow);
                 if (!backgroundSelected) backgroundImage = new Bitmap(glowImage); //if only the glow image is selected, set it to the background so that it will be resized.
                 WidthHeightButtonLogic();
 
-                String path = Settings.vehicleFolderPath + Settings.vehicleOutputName;
+                string path = Settings.vehicleFolderPath + Settings.vehicleOutputName;
+                if(Settings.doBackups) XMLBackup.AddBackup(path);
                 bool optimize = useThreshold.Checked;
                 int optimizationThreshold = (int)threshold.Value;
                 bool glow = useGlow.Checked;
@@ -387,9 +427,7 @@ namespace ImageToPaintBlockConverter {
                     if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
                 } else if (modes.SelectedIndex == 4) { //don't resize mode
                     backgroundResized = new Bitmap(backgroundImage);
-                    if(glow) {
-                        if (glow) glowResized = new Bitmap(glowImage, backgroundImage.Width, backgroundImage.Height);
-                    }
+                    if (glow) glowResized = new Bitmap(glowImage, backgroundImage.Width, backgroundImage.Height);
                 }
                 //draw image onto background, add which where image is incase the image is transparent, and a border if the width or height is not divisible by 9.
                 backgroundBitmap = new Bitmap((int)(Math.Ceiling((double)backgroundResized.Width / 9) * 9), (int)(Math.Ceiling((double)backgroundResized.Height / 9) * 9));
@@ -407,7 +445,7 @@ namespace ImageToPaintBlockConverter {
                 //generate the vehicle on a separate thread from the window so that the window doesn't freeze.
                 ThreadStart starter = GenerateXML;
                 starter += () => { //runs when thread is finished
-                    Invoke(new Action(() => { generate.Text = "Generate XML"; generate.Enabled = true; }));
+                    Invoke(new Action(() => { generate.Text = "Generate XML"; generate.Enabled = true; generatingXML = false; GC.Collect(); }));
                 };
 
                 Thread thread = new Thread(starter);
@@ -415,18 +453,21 @@ namespace ImageToPaintBlockConverter {
                 thread.Start();
 
                 void GenerateXML() {
-                    if(!glow) Util.SaveFile(GenerateVehicle.GenerateXML(backgroundBitmap, optimize, optimizationThreshold),path);
-                    else Util.SaveFile(GenerateVehicle.GenerateXML(backgroundBitmap, glowBitmap, backgroundSelected), path);
+                    if (!glow) Util.SaveFile(GenerateVehicle.GenerateXML(backgroundBitmap, optimize, optimizationThreshold), path);
+                    else Util.SaveFile(GenerateVehicle.GenerateXML(backgroundBitmap, glowBitmap, darken.Checked, backgroundSelected), path);
                 }
-                System.GC.Collect();
             });
 
             openSettings.Click += new EventHandler((object o, EventArgs a) => {
-                Thread thread = new Thread(SettingsWindow);
-                thread.IsBackground = true;  //makes thread stop when main window is closed
-                thread.Start();
-                void SettingsWindow() {
-                    new SettingsWindow().ShowDialog();
+                if(!settingsOpen) {
+                    settingsOpen = true;
+                    Thread thread = new Thread(SettingsWindow);
+                    thread.IsBackground = true;  //makes thread stop when main window is closed
+                    thread.Start();
+                    void SettingsWindow() {
+                        new SettingsWindow().ShowDialog();
+                        settingsOpen = false;
+                    }
                 }
             });
 

@@ -3,11 +3,11 @@ A program to convert an images to both types of stormworks paintblocks.
 
 ## Usage/Tutorial
 ![ImageConverterGUI](https://user-images.githubusercontent.com/99307745/177545181-5d521895-9be5-4cae-bf57-22b3e91f9023.png)
-1. Run the program. (Don't forget that the program will also generate an xml settings file in the same directory as the exe)
+1. Extract the files from the zip folder, and put them in a folder for the program, then run the exe.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
 3. Choose a mode for the paintblock converter with the dropdown in the top left. (The names should be mostly self-explanatory, but the different modes are explained below in "Conversion Modes And Image Resizing") 
 4. **(If you're generating paintable signs)** Click ```Select File``` and choose the image to import in the file chooser.
-4. **(If you're generating paintable indicators)** Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional.
+4. **(If you're generating paintable indicators)** Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional. Additionally, select the ```Darken``` checkbox (on by default) if you want to darken the image, which helps correct for glow images being really bright.
 5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
 6. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for considering a block of pixels a single color and replacing it with a block. (More information in "How Optimizing Works")
 7. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
@@ -24,7 +24,7 @@ A program to convert an images to both types of stormworks paintblocks.
 
 Vehicles are optimized by replacing paintblocks with regular blocks. It can significantly reduce the lag of a vehicle in the editor and the filesize/spawn time. Whether or not to use a block is determined by checking if the difference between the min/max rgb values of colors in a paintblock are within a threshold, which is set by the user. If they are, a block is generated instead of a paintblock, and its color is set to an average of the pixel colors.
 
-This feature is most useful for importing blueprints, which usually have large blank spaces. I recommend to keep the threshold at 1 for blueprints which have no noise/compression artifacts in the image, and 10-25 for images with noise, for example the ship blueprint below, where I used a threshold of 15.
+This feature is most useful for importing blueprints, which usually have large blank spaces. I recommend to keep the threshold at 0 for blueprints which have no noise/compression artifacts in the image, and around 25 for images with noise, for example the ship blueprint below, where I used a threshold of 15.
 
 ## Settings File
 * The program uses an xml file to store a file path to the stormworks vehicle folder, as well as the name for a generated vehicle, and is automatically generated in the same directory as the program if it is not found. The default file path is ``C:\Users\%username%\AppData\Roaming\Stormworks\data\vehicles\``. (The username is filled in when generated, you don't have to change it yourself.)
@@ -44,8 +44,14 @@ Really good example of the benifits of the optimization setting for blueprints.
 For comparison on the loss of quality with the previous images.
 ![0threshold](https://user-images.githubusercontent.com/99307745/159141301-bdbf06d6-5dce-4ba9-8caf-7bc47678e8f0.png)
 
-## v1.5 Changes
+## v1.5 Changelog
 ### Features
+#### v1.5.4 Features/Changes
+* Added backup system which saves vehicles that are overwritten by the generator. The max amount of backups to save and toggle for the feature is controlled in the settings window of the program.
+* Added toggle for darkening glow image (on by default).
+* Although it can't be accessed through the program, the number used to divide the glow image pixel values to darken it can be edited in the settings xml file.
+* Refactored the code for settings/how the settings are stored.
+* Optimization threshold minimum now 0.
 #### v1.5.2
 * Removed windows ding sound when entering value in number input/text box.
 * Added Custom Height mode, which is similar to the Custom Width mode.
@@ -56,6 +62,9 @@ For comparison on the loss of quality with the previous images.
 * Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
 * The settings window is also run on a seperate thread.
 ### Bugfixes
+#### v1.5.4 Bugfixes
+* Generate XML button enabling when switching generation mode as it is generating.
+* Text being cut off if the window scale is changed.
 #### v1.5.3
 * Black bar appearing next to number input boxes.
 #### v1.5.1
