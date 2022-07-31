@@ -92,9 +92,9 @@ namespace ImageToPaintBlockConverter {
             Label backupCountLabel = new Label();
             backupCountLabel.Font = new Font("", 10 * fontCorrection);
             backupCountLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            backupCountLabel.Location = new Point(S(165), S(67));
-            backupCountLabel.Size = new Size(S(105), S(20));
-            backupCountLabel.Text = "Backup Max";
+            backupCountLabel.Location = new Point(S(0), S(92));
+            backupCountLabel.Size = new Size(S(115), S(20));
+            backupCountLabel.Text = "Max Backups";
             this.Controls.Add(backupCountLabel);
 
             backupCountLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
@@ -106,10 +106,10 @@ namespace ImageToPaintBlockConverter {
             backupCount.Value = Settings.backupCount;
             backupCount.ForeColor = Color.FromArgb(220, 220, 220);
             backupCount.BackColor = Color.FromArgb(70, 70, 80);
-            backupCount.Location = new Point(S(270), S(67));
-            backupCount.Size = new Size(S(40), S(20));
+            backupCount.Location = new Point(S(115), S(92));
+            backupCount.Size = new Size(S(50), S(20));
             backupCount.Minimum = 1;
-            backupCount.Maximum = 99;
+            backupCount.Maximum = 999;
             backupCount.BorderStyle = BorderStyle.None;
             this.Controls.Add(backupCount);
             backupCount.KeyDown += (object o, KeyEventArgs a) => {
@@ -118,12 +118,12 @@ namespace ImageToPaintBlockConverter {
 
             //open backups in file explorer
             Button openBackups = new Button();
-            openBackups.Font = new Font("", 7 * fontCorrection);
-            openBackups.Text = "Backups";
+            openBackups.Font = new Font("", 12 * fontCorrection);
+            openBackups.Text = "Open Backups Folder";
             openBackups.ForeColor = Color.FromArgb(220, 220, 220);
             openBackups.BackColor = Color.FromArgb(70, 70, 80);
-            openBackups.Location = new Point(S(315), S(67));
-            openBackups.Size = new Size(S(65), S(25));
+            openBackups.Location = new Point(S(170), S(67));
+            openBackups.Size = new Size(S(210), S(47));
             openBackups.FlatStyle = FlatStyle.Flat;
             openBackups.FlatAppearance.BorderSize = 0;
             this.Controls.Add(openBackups);
@@ -137,10 +137,10 @@ namespace ImageToPaintBlockConverter {
 
             //scale
             Label scaleLabel = new Label();
-            scaleLabel.Font = new Font("", 9 * fontCorrection);
+            scaleLabel.Font = new Font("", 9.5f * fontCorrection);
             scaleLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            scaleLabel.Location = new Point(S(0), S(95));
-            scaleLabel.Size = new Size(S(107), S(20));
+            scaleLabel.Location = new Point(S(0), S(120));
+            scaleLabel.Size = new Size(S(115), S(20));
             scaleLabel.Text = "Window Scale";
             this.Controls.Add(scaleLabel);
             scaleLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
@@ -152,7 +152,7 @@ namespace ImageToPaintBlockConverter {
             scale.Value = (decimal)Settings.scale;
             scale.ForeColor = Color.FromArgb(220, 220, 220);
             scale.BackColor = Color.FromArgb(70, 70, 80);
-            scale.Location = new Point(S(110), S(95));
+            scale.Location = new Point(S(115), S(120));
             scale.Size = new Size(S(50), S(20));
             scale.Increment = (decimal)0.25;
             scale.DecimalPlaces = 2;
@@ -169,7 +169,7 @@ namespace ImageToPaintBlockConverter {
             close.Text = "Cancel";
             close.ForeColor = Color.FromArgb(220, 220, 220);
             close.BackColor = Color.FromArgb(70, 70, 80);
-            close.Location = new Point(S(170), S(95));
+            close.Location = new Point(S(170), S(120));
             close.Size = new Size(S(70), S(25));
             close.FlatStyle = FlatStyle.Flat;
             close.FlatAppearance.BorderSize = 0;
@@ -179,12 +179,16 @@ namespace ImageToPaintBlockConverter {
                 this.Close();
             });
 
+            close.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(close, "Closes window and doesn't save setting changes. Equivalent to closing by clicking the x.");
+            });
+
             Button saveSettings = new Button();
             saveSettings.Font = new Font("", 10 * fontCorrection);
             saveSettings.Text = "Save";
             saveSettings.ForeColor = Color.FromArgb(220, 220, 220);
             saveSettings.BackColor = Color.FromArgb(70, 70, 80);
-            saveSettings.Location = new Point(S(245), S(95));
+            saveSettings.Location = new Point(S(245), S(120));
             saveSettings.Size = new Size(S(65), S(25));
             saveSettings.FlatStyle = FlatStyle.Flat;
             saveSettings.FlatAppearance.BorderSize = 0;
@@ -199,12 +203,16 @@ namespace ImageToPaintBlockConverter {
                 Settings.SaveSettings();
             });
 
+            saveSettings.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(saveSettings, "Save and apply settings. (Note: program has to be restarted for scale settings to apply)");
+            });
+
             Button resetSetting = new Button();
             resetSetting.Font = new Font("", 10 * fontCorrection);
             resetSetting.Text = "Reset";
             resetSetting.ForeColor = Color.FromArgb(220, 220, 220);
             resetSetting.BackColor = Color.FromArgb(70, 70, 80);
-            resetSetting.Location = new Point(S(315), S(95));
+            resetSetting.Location = new Point(S(315), S(120));
             resetSetting.Size = new Size(S(65), S(25));
             resetSetting.FlatStyle = FlatStyle.Flat;
             resetSetting.FlatAppearance.BorderSize = 0;
@@ -218,6 +226,10 @@ namespace ImageToPaintBlockConverter {
                 doBackups.Checked = Settings.doBackups;
                 backupCount.Value = Settings.backupCount;
                 scale.Value = (decimal)Settings.scale;
+            });
+
+            resetSetting.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(resetSetting, "Resets settings to defaults.");
             });
 
             int S(int value) {

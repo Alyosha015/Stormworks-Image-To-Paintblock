@@ -72,7 +72,7 @@ namespace ImageToPaintBlockConverter {
             Panel settings = new Panel();
             settings.BackColor = Color.FromArgb(30, 30, 30);
             settings.Location = new Point(S(5), S(40));
-            settings.Size = new Size(S(185), S(125));
+            settings.Size = new Size(S(185), S(120));
             this.Controls.Add(settings);
 
             //width
@@ -125,36 +125,36 @@ namespace ImageToPaintBlockConverter {
 
             //use threshold checkbox
             Label useThresholdLabel = new Label();
-            useThresholdLabel.Font = new Font("", 8 * fontCorrection);
+            useThresholdLabel.Font = new Font("", 9 * fontCorrection);
             useThresholdLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            useThresholdLabel.Location = new Point(S(5), S(70));
-            useThresholdLabel.Size = new Size(S(75), S(15));
+            useThresholdLabel.Location = new Point(S(5), S(69));
+            useThresholdLabel.Size = new Size(S(80), S(20));
             useThresholdLabel.Text = "Optimize?";
             settings.Controls.Add(useThresholdLabel);
 
             useThresholdLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(useThresholdLabel, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the min/max values of the colors are within the set threshold. The block's color is an average of the pixels.");
+                tooltip.SetToolTip(useThresholdLabel, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the variation between rgb values of the pixels are within the set threshold. The block's color is an average of the pixels.");
             });
 
             CheckBox useThreshold = new CheckBox();
             useThreshold.ForeColor = Color.FromArgb(220, 220, 220);
             useThreshold.BackColor = Color.FromArgb(70, 70, 80);
-            useThreshold.Location = new Point(S(80), S(70));
+            useThreshold.Location = new Point(S(85), S(70));
             useThreshold.Size = new Size(S(14), S(15));
             useThreshold.FlatStyle = FlatStyle.Flat;
             useThreshold.FlatAppearance.BorderSize = 0;
             settings.Controls.Add(useThreshold);
 
             useThreshold.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(useThreshold, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the min/max values of the colors are within the set threshold. The block's color is an average of the pixels.");
+                tooltip.SetToolTip(useThreshold, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the variation between rgb values of the pixels are within the set threshold. The block's color is an average of the pixels.");
             });
 
             //darken (shown when glow mode is turned on)
 
             Label darkenLabel = new Label();
-            darkenLabel.Font = new Font("", 9 * fontCorrection);
+            darkenLabel.Font = new Font("", 10 * fontCorrection);
             darkenLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            darkenLabel.Location = new Point(S(5), S(70));
+            darkenLabel.Location = new Point(S(5), S(68));
             darkenLabel.Size = new Size(S(80), S(20));
             darkenLabel.Text = "Darken?";
             darkenLabel.Visible = false;
@@ -179,10 +179,10 @@ namespace ImageToPaintBlockConverter {
 
             //glow
             Label useGlowLabel = new Label();
-            useGlowLabel.Font = new Font("", 8 * fontCorrection);
+            useGlowLabel.Font = new Font("", 10 * fontCorrection);
             useGlowLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            useGlowLabel.Location = new Point(S(110), S(70));
-            useGlowLabel.Size = new Size(S(50), S(15));
+            useGlowLabel.Location = new Point(S(106), S(68));
+            useGlowLabel.Size = new Size(S(60), S(20));
             useGlowLabel.Text = "Glow?";
             settings.Controls.Add(useGlowLabel);
 
@@ -193,7 +193,7 @@ namespace ImageToPaintBlockConverter {
             CheckBox useGlow = new CheckBox();
             useGlow.ForeColor = Color.FromArgb(220, 220, 220);
             useGlow.BackColor = Color.FromArgb(70, 70, 80);
-            useGlow.Location = new Point(S(160), S(70));
+            useGlow.Location = new Point(S(166), S(70));
             useGlow.Size = new Size(S(14), S(15));
             useGlow.FlatStyle = FlatStyle.Flat;
             useGlow.FlatAppearance.BorderSize = 0;
@@ -211,6 +211,9 @@ namespace ImageToPaintBlockConverter {
             thresholdLabel.Size = new Size(S(87), S(20));
             thresholdLabel.Text = "Threshold";
             settings.Controls.Add(thresholdLabel);
+            thresholdLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(thresholdLabel, "Threshold setting for optimization mode above.");
+            });
 
             NumericUpDown threshold = new NumericUpDown();
             threshold.Font = new Font("", 10 * fontCorrection);
@@ -226,12 +229,15 @@ namespace ImageToPaintBlockConverter {
             threshold.KeyDown += (object o, KeyEventArgs a) => {
                 if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
             };
+            threshold.MouseHover += new EventHandler((object o, EventArgs a) => {
+                tooltip.SetToolTip(threshold, "Threshold setting for optimization mode above.");
+            });
 
             //controls
             Panel controls = new Panel();
             controls.BackColor = Color.FromArgb(30, 30, 30);
             controls.Location = new Point(S(195), S(5));
-            controls.Size = new Size(S(185), S(160));
+            controls.Size = new Size(S(185), S(155));
             this.Controls.Add(controls);
 
             //filepath0
@@ -316,6 +322,8 @@ namespace ImageToPaintBlockConverter {
                     useThresholdLabel.Visible = false;
                     darken.Visible = true;
                     darkenLabel.Visible = true;
+
+                    threshold.Enabled = false;
                 } else {
                     selectGlowFile.Enabled = false;
                     selectGlowFile.Visible = false;
@@ -334,6 +342,8 @@ namespace ImageToPaintBlockConverter {
                     useThresholdLabel.Visible = true;
                     darken.Visible = false;
                     darkenLabel.Visible = false;
+
+                    if(useThreshold.Checked) threshold.Enabled = true;
                 }
             });
 

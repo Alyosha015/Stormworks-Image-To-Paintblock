@@ -5,11 +5,8 @@ using System.Text;
 
 namespace ImageToPaintBlockConverter {
     class Settings {
-        public static string version = "v1.5.4";
+        public static string version = "v1.5.5";
         public static string windowTitle = "Converter " + version;
-
-        public static int windowWidth = 400;
-        public static int windowHeight = 215;
 
         public static string currentDirectory = Directory.GetCurrentDirectory();
         public static string backupsDirectory = currentDirectory + @"\backups";
@@ -49,8 +46,6 @@ namespace ImageToPaintBlockConverter {
                 }
             }
             if (scale == 0) scale = 1;
-            windowWidth = (int)(400 * scale);
-            windowHeight = (int)(215 * scale);
         }
 
         public static void SaveSettings() {
@@ -76,7 +71,7 @@ namespace ImageToPaintBlockConverter {
                 writer.WriteElementString("version", version);
                 writer.WriteElementString("vehicleFolderPath", @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Stormworks\data\vehicles\");
                 writer.WriteElementString("vehicleOutputName", "Generated.xml");
-                writer.WriteElementString("doBackups", true.ToString());
+                writer.WriteElementString("doBackups", false.ToString());
                 writer.WriteElementString("backupCount", "5");
                 writer.WriteElementString("scale", "1");
                 writer.WriteComment("darken stores what the r/g/b subpixel values are divided by to darken the image, so I stored it here incase you wanted to mess around with it. (default is 2.75)");

@@ -2,7 +2,7 @@
 A program to convert an images to both types of stormworks paintblocks.
 
 ## Usage/Tutorial
-![ImageConverterGUI](https://user-images.githubusercontent.com/99307745/177545181-5d521895-9be5-4cae-bf57-22b3e91f9023.png)
+![ImageConverterGUIv1 5 5](https://user-images.githubusercontent.com/99307745/182013032-4449c326-c0bd-47c6-92dd-c83ff86c71dd.png)
 1. Extract the files from the zip folder, and put them in a folder for the program, then run the exe.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
 3. Choose a mode for the paintblock converter with the dropdown in the top left. (The names should be mostly self-explanatory, but the different modes are explained below in "Conversion Modes And Image Resizing") 
@@ -46,7 +46,9 @@ For comparison on the loss of quality with the previous images.
 
 ## v1.5 Changelog
 ### Features
-#### v1.5.4 Features/Changes
+#### v1.5.5
+* Improved GUI for Main window/Settings window, notably the layout of the settings window.
+#### v1.5.4
 * Added backup system which saves vehicles that are overwritten by the generator. The max amount of backups to save and toggle for the feature is controlled in the settings window of the program.
 * Added toggle for darkening glow image (on by default).
 * Although it can't be accessed through the program, the number used to divide the glow image pixel values to darken it can be edited in the settings xml file.
