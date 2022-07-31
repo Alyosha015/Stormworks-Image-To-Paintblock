@@ -7,7 +7,7 @@ A program to convert an images to both types of stormworks paintblocks.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
 3. Choose a mode for the paintblock converter with the dropdown in the top left. (The names should be mostly self-explanatory, but the different modes are explained below in "Conversion Modes And Image Resizing") 
 4. **(If you're generating paintable signs)** Click ```Select File``` and choose the image to import in the file chooser.
-4. **(If you're generating paintable indicators)** Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional. Additionally, select the ```Darken``` checkbox (on by default) if you want to darken the image, which helps correct for glow images being really bright.
+4. **(If you're generating paintable indicators)** Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional. Additionally, if you don't want the glow image to be darkened (which helps with how bright they are) uncheck the ```Darken?``` checkbox.
 5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
 6. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for considering a block of pixels a single color and replacing it with a block. (More information in "How Optimizing Works")
 7. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
@@ -26,8 +26,16 @@ Vehicles are optimized by replacing paintblocks with regular blocks. It can sign
 
 This feature is most useful for importing blueprints, which usually have large blank spaces. I recommend to keep the threshold at 0 for blueprints which have no noise/compression artifacts in the image, and around 25 for images with noise, for example the ship blueprint below, where I used a threshold of 15.
 
-## Settings File
-* The program uses an xml file to store a file path to the stormworks vehicle folder, as well as the name for a generated vehicle, and is automatically generated in the same directory as the program if it is not found. The default file path is ``C:\Users\%username%\AppData\Roaming\Stormworks\data\vehicles\``. (The username is filled in when generated, you don't have to change it yourself.)
+## Settings
+* The program uses an xml file to store settings, and the settings can be edited though the settings window of the program. The file is automatically generated if it is not found. Below are the settings stored in the xml:
+1. ```vehicleFolderPath``` - The filepath to the stormworks vehicle folder.
+2. ```vehicleOutputName``` - The filename of the outputed vehicle file.
+3. ```doBackup``` - Either True or False, determines whether to save backups of the vehicle files it overwrites.
+4. ```backupCount``` - How many backups to store until the oldest is deleted and replaced with a new one.
+5. ```scale``` - Multiplier for the size of the windows.
+6. ```darken``` (not editable in settings window) - How much rgb data is divided by to darken it if ```Darken?``` is selected.
+#### Backups
+* If ```Backup Vehicles?``` is selected in the settings (off by default), the image converter will make a backup of any vehicle file it overwrites in the stormworks vehicle folder. The newest backup in the folder will be backup0.xml, second newest backup1.xml, and so on. The amount of backups to make keep is controlled by ```Max Backups```.
 
 ## Examples Of Optimization Used
 ### B-52 Bomber with threshold set to 1, and blocks repainted black.
