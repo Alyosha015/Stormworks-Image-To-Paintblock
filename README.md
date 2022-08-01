@@ -1,7 +1,7 @@
 # Stormworks Image To Paintblock Converter
 A program to convert an images to both types of stormworks paintblocks.
 
-## Usage/Tutorial
+## Tutorial
 ![ImageConverterGUIv1 5 5](https://user-images.githubusercontent.com/99307745/182013032-4449c326-c0bd-47c6-92dd-c83ff86c71dd.png)
 1. Extract the files from the zip folder to where you want to store the program, then run the exe.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
@@ -22,7 +22,7 @@ A program to convert an images to both types of stormworks paintblocks.
 ## How Optimizing Works
 * Note: This feature is only available for generating paintable signs, not paintable indicators.
 
-Vehicles are optimized by replacing paintblocks with regular blocks. It can significantly reduce the lag of a vehicle in the editor and the filesize/spawn time. Whether or not to use a block is determined by checking if the difference between the min/max rgb values of colors in a paintblock are within a threshold, which is set in the program. If they are, a block is generated instead of a paintblock, and its color is set to an average of the pixels colors.
+Vehicles are optimized by replacing paintblocks with regular blocks. It can significantly reduce the lag of a vehicle in the editor and the filesize/spawn time. Whether or not to use a block is determined by checking if the difference between the min/max rgb values of colors in a paintblock are within a threshold, which is set in the program. If they are, a block is generated instead of a paintblock, and its color is set to an average of the pixels colors. For example, if the smallest red value is 14 and the highest is 25, the variation between them 11. If the threshold was set to 11 or greater, and the variation for the green and blue colors was also less than or equal to 11, a block will be used.
 
 This feature is most useful for importing blueprints, which usually have large blank spaces. I recommend to keep the threshold at 0 for blueprints which have no noise/compression artifacts in the image, and around 25 for images with noise, for example the ship blueprint below where I used a threshold of 15.
 
