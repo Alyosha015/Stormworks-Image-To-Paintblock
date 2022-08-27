@@ -1,16 +1,16 @@
 # Stormworks Image To Paintblock Converter
-A program to convert an images to both types of stormworks paintblocks.
+A windows program to convert images into both types of stormworks paintblocks.
 
 ## Tutorial
-![ImageConverterGUIv1 5 5](https://user-images.githubusercontent.com/99307745/182013032-4449c326-c0bd-47c6-92dd-c83ff86c71dd.png)
+![ImageConverterGUI_v1 6 0](https://user-images.githubusercontent.com/99307745/186766827-376bd3db-37a4-47f4-9264-0839e1935de8.png)
 1. Extract the files from the zip folder to where you want to store the program, then run the exe.
 2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
 3. **(If you're generating paintable signs)** Click ```Select File``` and choose the image to import in the file chooser.
 4. **(If you're generating paintable indicators)** Click ```Select Background``` to set the image shown on the background of a paintable indicator, and ```Select Glow``` to set the image shown when the paintable indicator is turned on. Setting the background image is optional. Additionally, if you don't want the glow image to be darkened (which helps with how bright they are) uncheck the ```Darken?``` checkbox.
-5. Choose a mode for the paintblock converter with the dropdown in the top left. (The names should be mostly self-explanatory, but the different modes are explained below in "Conversion Modes And Image Resizing") 
+5. Choose a mode for the paintblock converter with the dropdown in the top left. (The names should be mostly self-explanatory, but the different modes are explained below in "Conversion Modes And Image Resizing").
 6. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
-7. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for considering a block of pixels a single color and replacing it with a block. (More information in "How Optimizing Works").
-8. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes less than a second, but for image hundreds of blocks in size it can take a couple seconds.
+7. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for the program to consider a block of pixels a single color and replacing it with a block. (More information in "How Optimizing Works").
+8. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. Generating usually takes milliseconds, but for image hundreds of blocks in size it can take a couple seconds.
 
 ## Conversion Modes And Image Resizing
 1. ```Custom Dimensions``` - Width and Height can be choosen by user, and the image is stretched to fit the new dimensions.
@@ -28,14 +28,19 @@ This feature is most useful for importing blueprints, which usually have large b
 
 ## Settings
 #### Backups
-* If ```Backup Vehicles?``` is selected in the settings (off by default), the image converter will make a backup of any vehicle file it overwrites in the stormworks vehicle folder. The newest backup in the folder will be backup0.xml, second newest backup1.xml, and so on. The amount of backups to make keep is controlled by ```Max Backups```.
+* If ```Backup Vehicles?``` is selected in the settings (off by default), the program will make a backup of any vehicle file it overwrites in the stormworks vehicle folder. The newest backup in the folder will be backup0.xml, second newest backup1.xml, and so on. The amount of backups to make keep is controlled by ```Max Backups```.
 * The program uses an xml file to store settings, and the settings can be edited though the settings window of the program. The file is automatically generated if it is not found. Below are the settings stored in the xml:
-1. ```vehicleFolderPath``` - The filepath to the stormworks vehicle folder.
-2. ```vehicleOutputName``` - The filename of the outputed vehicle file.
-3. ```doBackup``` - Either True or False, determines whether to save backups of the vehicle files it overwrites.
-4. ```backupCount``` - How many backups to store until the oldest is deleted and replaced with a new one.
-5. ```scale``` - Multiplier for the size of the windows.
+1. ```Version``` - Version of program that made the file, not used by anything.
+2. ```vehicleFolderPath``` - The filepath to the stormworks vehicle folder.
+3. ```useImageNameAsVehicleName``` - If set to True, the name of the vehicle file will be the name of the selected image. (If two images are used in Glow mode, the name of the background image will be used).
+3. ```vehicleOutputName``` - The filename of the outputed vehicle file.
+4. ```doBackup``` - Either True or False, determines whether to save backups of the vehicle files it overwrites.
+5. ```backupCount``` - How many backups to store until the oldest is deleted and replaced with a new one.
 6. ```darken``` (not editable in settings window, only directly in the xml) - How much rgb data is divided by to darken it if ```Darken?``` is selected.
+7. ```saveAndLoadWindowPos``` - If set to True, the program will save its screen position when closed and load there instead of the center of the primary monitor when the program is launched.
+8. ```monitorNum``` - Used to save which monitor the window was on when closed.
+9. ```xPos``` Used to save x position of window when closed.
+10. ```yPos``` Used to save y position of window when closed.
 
 ## Examples Of Optimization Used
 ### B-52 Bomber with threshold set to 1, and blocks repainted black.
@@ -51,36 +56,3 @@ Really good example of the benifits of the optimization setting for blueprints.
 ### Optimization Not Used
 For comparison on the loss of quality with the previous images.
 ![0threshold](https://user-images.githubusercontent.com/99307745/159141301-bdbf06d6-5dce-4ba9-8caf-7bc47678e8f0.png)
-
-## v1.5 Changelog
-### Features
-#### v1.5.5
-* Improved GUI for Main window/Settings window, notably the layout of the settings window.
-#### v1.5.4
-* Added backup system which saves vehicles that are overwritten by the generator. The max amount of backups to save and toggle for the feature is controlled in the settings window of the program.
-* Added toggle for darkening glow image (on by default).
-* Although it can't be accessed through the program, the number used to divide the glow image pixel values to darken it can be edited in the settings xml file.
-* Refactored the code for settings/how the settings are stored.
-* Optimization threshold minimum now 0.
-#### v1.5.2
-* Removed windows ding sound when entering value in number input/text box.
-* Added Custom Height mode, which is similar to the Custom Width mode.
-* Refactored code for resizing images, hopefully without bugs.
-#### v1.5.0
-* The converter now works with transparent images.
-* The converter now supports paintable indicators, and allows setting seperate images for the background and glowing parts of the block. The boolean and electrical logic for them is also automatically generated.
-* Vehicle generation is run on a seperate thread from the window, so the window will not freeze during generation. The "Generate XML" button also changes to "Generating..." when a vehicle is generating.
-* The settings window is also run on a seperate thread.
-### Bugfixes
-#### v1.5.4 Bugfixes
-* Generate XML button enabling when switching generation mode as it is generating.
-* Text being cut off if the window scale is changed.
-#### v1.5.3
-* Black bar appearing next to number input boxes.
-#### v1.5.1
-* Don't Resize Mode cutting off edge of image when one of the images dimensions is divisible by 9 and the other isn't.
-* Glow image not resizing if Background Image was selected then unselected.
-#### v1.5.0
-* Clicking the button to save settings crashing the program.
-* Window looking messed up when screen scaling is not 125%.
-* Generate XML button enabled when no mode is selected.

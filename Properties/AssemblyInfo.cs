@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Image To Paintblock Converter v1.5.5")]
+[assembly: AssemblyTitle("ImageConverter v1.6.0")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ImageToPaintBlockConverter")]
+[assembly: AssemblyProduct("ImageConverter v1.6.0")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c16a2df7-44a3-495f-a2a2-70b964082fce")]
+[assembly: Guid("46f38595-fc1a-4ac1-9743-4dcd5db07023")]
 
 // Version information for an assembly consists of the following four values:
 //

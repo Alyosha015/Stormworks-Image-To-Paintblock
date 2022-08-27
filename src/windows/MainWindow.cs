@@ -1,530 +1,261 @@
 ﻿using System;
 using System.IO;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
-namespace ImageToPaintBlockConverter {
-    public partial class Window : Form {
-        public static Window window;
-        public Button generate;
-        public Window() {
+namespace ImageConverter {
+    public partial class MainWindow : Form {
+        private bool backgroundSelected = false;
+        private bool glowSelected = false;
+        private string pathToBackground = "";
+        private string pathToGlow = "";
+        private Bitmap backgroundImage = new Bitmap(1, 1);
+        private Bitmap glowImage = new Bitmap(1, 1);
+        private bool settingsOpen = false;
+        private bool generatingXML = false;
+
+        public MainWindow() {
             InitializeComponent();
         }
 
-        private void Window_Load(object sender, EventArgs e) {
-            window = this;
-            float Scale = Settings.scale;
+        private void MainWindow_Load(object sender, EventArgs e) {
             float dpi = this.CreateGraphics().DpiX;
-            float fontCorrection = (120 / dpi) * Scale;
-            bool generatingXML = false;
-            bool settingsOpen = false;
-
-            this.Icon = Icon.FromHandle(ImageToPaintBlockConverter.Properties.Resources.LogoInverted.GetHicon());
-
-            this.Location = new Point((int)System.Windows.SystemParameters.PrimaryScreenWidth / 2, (int)System.Windows.SystemParameters.PrimaryScreenHeight / 2);
-
-            this.Text = Settings.windowTitle;
-            this.Width = 1;
-            this.Height = 1;
-            this.BackColor = Color.FromArgb(37, 37, 38);
-
-            this.MaximizeBox = false;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-
-            string pathToBackground = "";
-            Bitmap backgroundImage = new Bitmap(1, 1);
-            bool backgroundSelected = false;
-
-            string pathToGlow = "";
-            Bitmap glowImage = new Bitmap(1, 1);
-            bool glowSelected = false;
-
-            ToolTip tooltip = new ToolTip();
-
-            //Mode selector
-            ComboBox modes = new ComboBox();
-            modes.Name = "ModeCombobox";
-            modes.Font = new Font("", 10 * fontCorrection);
-            modes.Location = new Point(S(5), S(5));
-            modes.Size = new Size(S(185), S(25));
-            modes.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            modes.Items.Add("Select Mode");
-            modes.Items.Add("Custom Dimensions");
-            modes.Items.Add("Custom Width");
-            modes.Items.Add("Custom Height");
-            modes.Items.Add("Don't Resize");
-            modes.SelectedIndex = 0;
-
-            modes.ForeColor = Color.FromArgb(220, 220, 220);
-            modes.BackColor = Color.FromArgb(70, 70, 80);
-
-            modes.FlatStyle = FlatStyle.Flat;
-
-            this.Controls.Add(modes);
-
-            modes.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(modes, "Modes for how to convert the image to paintblocks.\n 1: Custom Dimensions allows stretching the image\n 2: Custom Width keeps the aspect ratio of the image\n 3: Custom Height keeps the aspect ratio of the image\n 4: Don't Resize copies the image pixel for pixel");
-            });
-
-            //output settings
-            Panel settings = new Panel();
-            settings.BackColor = Color.FromArgb(30, 30, 30);
-            settings.Location = new Point(S(5), S(40));
-            settings.Size = new Size(S(185), S(120));
-            this.Controls.Add(settings);
-
-            //width
-            Label widthLabel = new Label();
-            widthLabel.Font = new Font("", 10 * fontCorrection);
-            widthLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            widthLabel.Location = new Point(S(5), S(5));
-            widthLabel.Size = new Size(S(60), S(20));
-            widthLabel.Text = "Width";
-            settings.Controls.Add(widthLabel);
-
-            NumericUpDown width = new NumericUpDown();
-            width.Font = new Font("", 10 * fontCorrection);
-            width.ForeColor = Color.FromArgb(220, 220, 220);
-            width.BackColor = Color.FromArgb(70, 70, 80);
-            width.Location = new Point(S(65), S(5));
-            width.Size = new Size(S(115), S(20));
-            width.Minimum = 1;
-            width.Maximum = Int32.MaxValue;
-            width.Enabled = false;
-            width.BorderStyle = BorderStyle.None;
-            settings.Controls.Add(width);
-            width.KeyDown += (object o, KeyEventArgs a) => {
-                if(a.KeyCode==Keys.Enter) a.SuppressKeyPress = true;
-            };
-
-            //height
-            Label heightLabel = new Label();
-            heightLabel.Font = new Font("", 10 * fontCorrection);
-            heightLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            heightLabel.Location = new Point(S(5), S(40));
-            heightLabel.Size = new Size(S(60), S(20));
-            heightLabel.Text = "Height";
-            settings.Controls.Add(heightLabel);
-
-            NumericUpDown height = new NumericUpDown();
-            height.Font = new Font("", 10 * fontCorrection);
-            height.ForeColor = Color.FromArgb(220, 220, 220);
-            height.BackColor = Color.FromArgb(70, 70, 80);
-            height.Location = new Point(S(65), S(40));
-            height.Size = new Size(S(115), S(20));
-            height.Minimum = 1;
-            height.Maximum = Int32.MaxValue;
-            height.Enabled = false;
-            height.BorderStyle = BorderStyle.None;
-            settings.Controls.Add(height);
-            height.KeyDown += (object o, KeyEventArgs a) => {
-                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
-            };
-
-            //use threshold checkbox
-            Label useThresholdLabel = new Label();
-            useThresholdLabel.Font = new Font("", 9 * fontCorrection);
-            useThresholdLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            useThresholdLabel.Location = new Point(S(5), S(69));
-            useThresholdLabel.Size = new Size(S(80), S(20));
-            useThresholdLabel.Text = "Optimize?";
-            settings.Controls.Add(useThresholdLabel);
-
-            useThresholdLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(useThresholdLabel, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the variation between rgb values of the pixels are within the set threshold. The block's color is an average of the pixels.");
-            });
-
-            CheckBox useThreshold = new CheckBox();
-            useThreshold.ForeColor = Color.FromArgb(220, 220, 220);
-            useThreshold.BackColor = Color.FromArgb(70, 70, 80);
-            useThreshold.Location = new Point(S(85), S(70));
-            useThreshold.Size = new Size(S(14), S(15));
-            useThreshold.FlatStyle = FlatStyle.Flat;
-            useThreshold.FlatAppearance.BorderSize = 0;
-            settings.Controls.Add(useThreshold);
-
-            useThreshold.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(useThreshold, "Optimizes the image by replacing paintblocks with regular blocks.\nA paintblock is replaced when the variation between rgb values of the pixels are within the set threshold. The block's color is an average of the pixels.");
-            });
-
-            //darken (shown when glow mode is turned on)
-
-            Label darkenLabel = new Label();
-            darkenLabel.Font = new Font("", 10 * fontCorrection);
-            darkenLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            darkenLabel.Location = new Point(S(5), S(68));
-            darkenLabel.Size = new Size(S(80), S(20));
-            darkenLabel.Text = "Darken?";
-            darkenLabel.Visible = false;
-            settings.Controls.Add(darkenLabel);
-            darkenLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(darkenLabel, "Darkens glow image to make it appear less bright.");
-            });
-
-            CheckBox darken = new CheckBox();
-            darken.ForeColor = Color.FromArgb(220, 220, 220);
-            darken.BackColor = Color.FromArgb(70, 70, 80);
-            darken.Location = new Point(S(80), S(70));
-            darken.Size = new Size(S(14), S(15));
-            darken.FlatStyle = FlatStyle.Flat;
-            darken.FlatAppearance.BorderSize = 0;
-            darken.Visible = false;
-            darken.Checked = true;
-            settings.Controls.Add(darken);
-            darken.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(darken, "Darkens glow image to make it appear less bright.");
-            });
-
-            //glow
-            Label useGlowLabel = new Label();
-            useGlowLabel.Font = new Font("", 10 * fontCorrection);
-            useGlowLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            useGlowLabel.Location = new Point(S(106), S(68));
-            useGlowLabel.Size = new Size(S(60), S(20));
-            useGlowLabel.Text = "Glow?";
-            settings.Controls.Add(useGlowLabel);
-
-            useGlowLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(useGlowLabel, "Allows generating paintable indicators instead of paintable signs. If a background image is selected, the glow image will be scaled/stretched to the size of the background image.");
-            });
-
-            CheckBox useGlow = new CheckBox();
-            useGlow.ForeColor = Color.FromArgb(220, 220, 220);
-            useGlow.BackColor = Color.FromArgb(70, 70, 80);
-            useGlow.Location = new Point(S(166), S(70));
-            useGlow.Size = new Size(S(14), S(15));
-            useGlow.FlatStyle = FlatStyle.Flat;
-            useGlow.FlatAppearance.BorderSize = 0;
-            settings.Controls.Add(useGlow);
-
-            useGlow.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(useGlow, "Allows generating paintable indicators instead of paintable signs. If a background image is selected, the glow image will be scaled/stretched to the size of the background image.");
-            });
-
-            //threshold
-            Label thresholdLabel = new Label();
-            thresholdLabel.Font = new Font("", 10 * fontCorrection);
-            thresholdLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            thresholdLabel.Location = new Point(S(5), S(95));
-            thresholdLabel.Size = new Size(S(87), S(20));
-            thresholdLabel.Text = "Threshold";
-            settings.Controls.Add(thresholdLabel);
-            thresholdLabel.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(thresholdLabel, "Threshold setting for optimization mode above.");
-            });
-
-            NumericUpDown threshold = new NumericUpDown();
-            threshold.Font = new Font("", 10 * fontCorrection);
-            threshold.ForeColor = Color.FromArgb(220, 220, 220);
-            threshold.BackColor = Color.FromArgb(70, 70, 80);
-            threshold.Location = new Point(S(92), S(95));
-            threshold.Size = new Size(S(88), S(20));
-            threshold.Minimum = 0;
-            threshold.Maximum = 255;
-            threshold.Enabled = false;
-            threshold.BorderStyle = BorderStyle.None;
-            settings.Controls.Add(threshold);
-            threshold.KeyDown += (object o, KeyEventArgs a) => {
-                if (a.KeyCode == Keys.Enter) a.SuppressKeyPress = true;
-            };
-            threshold.MouseHover += new EventHandler((object o, EventArgs a) => {
-                tooltip.SetToolTip(threshold, "Threshold setting for optimization mode above.");
-            });
-
-            //controls
-            Panel controls = new Panel();
-            controls.BackColor = Color.FromArgb(30, 30, 30);
-            controls.Location = new Point(S(195), S(5));
-            controls.Size = new Size(S(185), S(155));
-            this.Controls.Add(controls);
-
-            //filepath0
-            Button selectBackgroundFile = new Button();
-            selectBackgroundFile.Font = new Font("", 12 * fontCorrection);
-            selectBackgroundFile.ForeColor = Color.FromArgb(220, 220, 220);
-            selectBackgroundFile.BackColor = Color.FromArgb(70, 70, 80);
-            selectBackgroundFile.Location = new Point(S(5), S(5));
-            selectBackgroundFile.Size = new Size(S(175), S(45));
-            selectBackgroundFile.Text = "Select File";
-            selectBackgroundFile.FlatStyle = FlatStyle.Flat;
-            selectBackgroundFile.FlatAppearance.BorderSize = 0;
-
-            controls.Controls.Add(selectBackgroundFile);
-
-            //filepath1
-            Button selectGlowFile = new Button();
-            selectGlowFile.Font = new Font("", 9 * fontCorrection);
-            selectGlowFile.ForeColor = Color.FromArgb(220, 220, 220);
-            selectGlowFile.BackColor = Color.FromArgb(70, 70, 80);
-            selectGlowFile.Location = new Point(S(110), S(5));
-            selectGlowFile.Size = new Size(S(70), S(45));
-            selectGlowFile.Text = "Select Glow";
-            selectGlowFile.FlatStyle = FlatStyle.Flat;
-            selectGlowFile.FlatAppearance.BorderSize = 0;
-            selectGlowFile.Enabled = false;
-            selectGlowFile.Visible = false;
-
-            controls.Controls.Add(selectGlowFile);
-
-            //generate
-            generate = new Button();
-            generate.Font = new Font("", 12 * fontCorrection);
-            generate.ForeColor = Color.FromArgb(220, 220, 220);
-            generate.BackColor = Color.FromArgb(70, 70, 80);
-            generate.Location = new Point(S(5), S(55));
-            generate.Size = new Size(S(175), S(45));
-            generate.Text = "Generate XML";
-            generate.FlatStyle = FlatStyle.Flat;
-            generate.FlatAppearance.BorderSize = 0;
-            generate.Enabled = false;
-            controls.Controls.Add(generate);
-
-            //settings
-            Button openSettings = new Button();
-            openSettings.Font = new Font("", 12 * fontCorrection);
-            openSettings.ForeColor = Color.FromArgb(220, 220, 220);
-            openSettings.BackColor = Color.FromArgb(70, 70, 80);
-            openSettings.Location = new Point(S(5), S(105));
-            openSettings.Size = new Size(S(175), S(45));
-            openSettings.Text = "Settings";
-            openSettings.FlatStyle = FlatStyle.Flat;
-            openSettings.FlatAppearance.BorderSize = 0;
-            controls.Controls.Add(openSettings);
-
-            modes.SelectedIndexChanged += new EventHandler((object o, EventArgs a) => {
-                if (modes.SelectedIndex != 0 && (backgroundSelected || glowSelected) && !generatingXML) generate.Enabled = true;
-                else generate.Enabled = false;
-                WidthHeightButtonLogic();
-            });
-
-            width.ValueChanged += new EventHandler((object o, EventArgs a) => {
-                WidthHeightButtonLogic();
-            });
-
-            height.ValueChanged += new EventHandler((object o, EventArgs a) => {
-                WidthHeightButtonLogic();
-            });
-
-            useGlow.CheckedChanged += new EventHandler((object o, EventArgs a) => {
-                if(useGlow.Checked) {
-                    selectGlowFile.Enabled = true;
-                    selectGlowFile.Visible = true;
-
-                    selectBackgroundFile.Size = new Size(S(100),S(45));
-                    selectBackgroundFile.Font = new Font("", 9 * fontCorrection);
-                    selectBackgroundFile.Text = "Select Background";
-
-                    useThreshold.Enabled = false;
-
-                    useThreshold.Visible = false;
-                    useThresholdLabel.Visible = false;
-                    darken.Visible = true;
-                    darkenLabel.Visible = true;
-
-                    threshold.Enabled = false;
-                } else {
-                    selectGlowFile.Enabled = false;
-                    selectGlowFile.Visible = false;
-
-                    selectBackgroundFile.Size = new Size(S(175), S(45));
-                    selectBackgroundFile.Font = new Font("", 12 * fontCorrection);
-                    selectBackgroundFile.Text = "Select File";
-
-                    pathToGlow = "";
-                    glowSelected = false;
-                    glowImage = new Bitmap(1, 1);
-
-                    useThreshold.Enabled = true;
-
-                    useThreshold.Visible = true;
-                    useThresholdLabel.Visible = true;
-                    darken.Visible = false;
-                    darkenLabel.Visible = false;
-
-                    if(useThreshold.Checked) threshold.Enabled = true;
-                }
-            });
-
-            useThreshold.CheckedChanged += new EventHandler((object o, EventArgs a) => {
-                if(useThreshold.Checked) {
-                    threshold.Enabled = true;
-                } else {
-                    threshold.Enabled = false;
-                }
-            });
-
-            selectBackgroundFile.Click += new EventHandler((object o, EventArgs a) => {
-                pathToBackground = Util.FileChooser("Image Chooser","", "All Files (*.*)|*.*|Supported Files (*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF)|*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF");
-                if (pathToBackground != null) {
-                    try {
-                        backgroundImage = Util.ReadImage(pathToBackground);
-                        backgroundSelected = true;
-                    } catch {
-
-                    }
-                }
-                else { backgroundSelected = false; backgroundImage = new Bitmap(1, 1); if (glowSelected) backgroundImage = new Bitmap(glowImage); }
-                WidthHeightButtonLogic();
-                if ((backgroundSelected || (glowSelected && useGlow.Checked)) && modes.SelectedIndex != 0) generate.Enabled = true;
-                else generate.Enabled = false;
-
-                if (backgroundSelected) selectBackgroundFile.ForeColor = Color.White;
-                else selectBackgroundFile.ForeColor = Color.FromArgb(220, 220, 220);
-            });
-
-            selectGlowFile.Click += new EventHandler((object o, EventArgs a) => {
-                pathToGlow = Util.FileChooser("Image Chooser", "", "All Files (*.*)|*.*|Supported Files (*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF)|*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF");
-                if (pathToGlow != null) {
-                    try {
-                        glowImage = Util.ReadImage(pathToGlow);
-                        glowSelected = true;
-                    } catch {
-
-                    }
-                }
-                else { glowSelected = false; glowImage = new Bitmap(1, 1); }
-                if (glowSelected && !backgroundSelected) backgroundImage = new Bitmap(glowImage);
-                WidthHeightButtonLogic();
-                if (backgroundSelected || (glowSelected && useGlow.Checked)) generate.Enabled = true;
-                else generate.Enabled = false;
-
-                if (glowSelected) selectGlowFile.ForeColor = Color.White;
-                else selectGlowFile.ForeColor = Color.FromArgb(220, 220, 220);
-            });
-
-            //(v.1.5.0) this turned into spagehetti code, im sorry to anyone trying to understand it in advance.
-            //goodluck!
-            //(v1.5.2) good news, I kinda fixed it.
-            generate.Click += new EventHandler((object o, EventArgs a) => {
-                generate.Text = "Generating...";
-                generate.Enabled = false;
-                generatingXML = true;
-                //incase the image was edited since it was selected, reopen the image and recalulate the width/height in blocks incase the size changed.
-                if (File.Exists(pathToBackground) && backgroundSelected) backgroundImage = Util.ReadImage(pathToBackground);
-                if (File.Exists(pathToGlow) && glowSelected) glowImage = Util.ReadImage(pathToGlow);
-                if (!backgroundSelected) backgroundImage = new Bitmap(glowImage); //if only the glow image is selected, set it to the background so that it will be resized.
-                WidthHeightButtonLogic();
-
-                string path = Settings.vehicleFolderPath + Settings.vehicleOutputName;
-                if(Settings.doBackups) XMLBackup.AddBackup(path);
-                bool optimize = useThreshold.Checked;
-                int optimizationThreshold = (int)threshold.Value;
-                bool glow = useGlow.Checked;
-
-                double aspectRatio = (double)backgroundImage.Height / (double)backgroundImage.Width;
-                int newY = (int)(((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)width.Value * 9);
-                int newX = (int)(((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)height.Value * 9);
-
-                //bitmap storing image after processing (resizing/adding white background)
-                Bitmap backgroundResized = new Bitmap(1, 1);
-                Bitmap glowResized = new Bitmap(1, 1);
-
-                //bitmap fed into generator
-                Bitmap backgroundBitmap = new Bitmap(1, 1);
-                Bitmap glowBitmap = new Bitmap(1, 1);
-
-                //resizes images based on mode
-                if(modes.SelectedIndex==1) { //custom dimensions mode
-                    backgroundResized = new Bitmap(backgroundImage, (int)width.Value * 9, (int)height.Value * 9);
-                    if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
-                } else if(modes.SelectedIndex==2) { //custom width mode
-                    backgroundResized = new Bitmap(backgroundImage, (int)width.Value * 9, newY);
-                    if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
-                } else if (modes.SelectedIndex == 3) { //custom height mode
-                    backgroundResized = new Bitmap(backgroundImage, newX, (int)height.Value * 9);
-                    if (glow) glowResized = new Bitmap(glowImage, backgroundResized.Width, backgroundResized.Height);
-                } else if (modes.SelectedIndex == 4) { //don't resize mode
-                    backgroundResized = new Bitmap(backgroundImage);
-                    if (glow) glowResized = new Bitmap(glowImage, backgroundImage.Width, backgroundImage.Height);
-                }
-                //draw image onto background, add which where image is incase the image is transparent, and a border if the width or height is not divisible by 9.
-                backgroundBitmap = new Bitmap((int)(Math.Ceiling((double)backgroundResized.Width / 9) * 9), (int)(Math.Ceiling((double)backgroundResized.Height / 9) * 9));
-                Graphics gBackground = Graphics.FromImage(backgroundBitmap);
-                if (backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, backgroundResized.Width, backgroundResized.Height));
-                gBackground.DrawImage(backgroundResized,0,0,backgroundResized.Width,backgroundResized.Height);
-
-                if(glow) {
-                    glowBitmap = new Bitmap(backgroundBitmap.Width, backgroundBitmap.Height);
-                    Graphics gGlow = Graphics.FromImage(glowBitmap);
-                    gGlow.DrawImage(glowResized,0,0,glowResized.Width,glowResized.Height);
-                }
-
-                if(!backgroundSelected) { glowBitmap = new Bitmap(backgroundBitmap); backgroundBitmap = new Bitmap(1,1); }
-                //generate the vehicle on a separate thread from the window so that the window doesn't freeze.
-                ThreadStart starter = GenerateXML;
-                starter += () => { //runs when thread is finished
-                    Invoke(new Action(() => { generate.Text = "Generate XML"; generate.Enabled = true; generatingXML = false; GC.Collect(); }));
-                };
-
-                Thread thread = new Thread(starter);
-                thread.IsBackground = true; //makes thread stop when main window is closed
-                thread.Start();
-
-                void GenerateXML() {
-                    if (!glow) Util.SaveFile(GenerateVehicle.GenerateXML(backgroundBitmap, optimize, optimizationThreshold), path);
-                    else Util.SaveFile(GenerateVehicle.GenerateXML(backgroundBitmap, glowBitmap, darken.Checked, backgroundSelected), path);
-                }
-            });
-
-            openSettings.Click += new EventHandler((object o, EventArgs a) => {
-                if(!settingsOpen) {
-                    settingsOpen = true;
-                    Thread thread = new Thread(SettingsWindow);
-                    thread.IsBackground = true;  //makes thread stop when main window is closed
-                    thread.Start();
-                    void SettingsWindow() {
-                        new SettingsWindow().ShowDialog();
-                        settingsOpen = false;
-                    }
-                }
-            });
-
-            void WidthHeightButtonLogic() {
-                if(backgroundSelected || (!backgroundSelected && glowSelected)) {
-                    //none selected
-                    if(modes.SelectedIndex == 0) {
-                        width.Enabled = false;
-                        height.Enabled = false;
-                    }
-                    //Custom dimensions
-                    if(modes.SelectedIndex == 1) {
-                        width.Enabled = true;
-                        height.Enabled = true;
-                    }
-                    //Custom Width
-                    if(modes.SelectedIndex == 2) {
-                        width.Enabled = true;
-                        height.Enabled = false;
-                        double newHeight = ((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)width.Value*9;
-                        height.Value = (int)Math.Ceiling(Math.Floor(newHeight)/9);
-                    }
-                    //Custom Height
-                    if(modes.SelectedIndex == 3) {
-                        width.Enabled = false;
-                        height.Enabled = true;
-                        double newWidth = ((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)height.Value * 9;
-                        width.Value = (int)Math.Ceiling(Math.Floor(newWidth) / 9);
-                    }
-                    //no resize
-                    if (modes.SelectedIndex == 4) {
-                        width.Enabled = false;
-                        height.Enabled = false;
-                        width.Value = (int)Math.Ceiling((double)backgroundImage.Width / 9);
-                        height.Value = (int)Math.Ceiling((double)backgroundImage.Height / 9);
-                    }
-                } else {
-                    width.Enabled = false;
-                    height.Enabled = false;
-                    width.Value = 1;
-                    height.Value = 1;
+            this.Icon = Icon.FromHandle(ImageConverter.Properties.Resources.IconInverted.GetHicon());
+            if (!Settings.saveAndLoadPos) this.Location = new Point((int)(Settings.xPos * (dpi / 96)), (int)(Settings.yPos * (dpi / 96)));
+            else this.Location = new Point(Settings.xPos, Settings.yPos);
+            this.Text = "Image Converter " + Settings.version;
+
+            ModeSelect.SelectedIndex = 0;
+        }
+
+        private void OnClose(object sender, FormClosedEventArgs e) {
+            Settings.currentMonitor = Convert.ToInt32(Regex.Replace(Screen.FromControl(this).DeviceName, "[^0-9]", ""));
+            Settings.xPos = this.Location.X;
+            Settings.yPos = this.Location.Y;
+            Settings.SaveOnClose();
+        }
+
+        private void ModeChanged(object sender, EventArgs e) {
+            if(ModeSelect.SelectedIndex != 0 && (backgroundSelected || glowSelected) && !generatingXML) GenerateXML.Enabled = true;
+            else GenerateXML.Enabled = false;
+            CalculateWidthHeight();
+        }
+
+        private void Width_ValueChanged(object sender, EventArgs e) {
+            CalculateWidthHeight();
+        }
+
+        private void Height_ValueChanged(object sender, EventArgs e) {
+            CalculateWidthHeight();
+        }
+
+        private void OptimizeCheckChange(object sender, EventArgs e) {
+            if (Optimize.Checked) Threshold.Enabled = true;
+            else Threshold.Enabled = false;
+        }
+
+        private void GlowCheckChanged(object sender, EventArgs e) {
+            if(Glow.Checked) {
+                Optimize.Enabled = false;
+                Optimize.Visible = false;
+                OptimizeLabel.Visible = false;
+                Threshold.Enabled = false;
+
+                Darken.Enabled = true;
+                Darken.Visible = true;
+                DarkenLabel.Visible = true;
+
+                SelectGlow.Visible = true;
+                SelectBackground.Visible = true;
+                SelectFile.Visible = false;
+            } else {
+                Optimize.Enabled = true;
+                Optimize.Visible = true;
+                OptimizeLabel.Visible = true;
+                if (Optimize.Checked) Threshold.Enabled = true;
+
+                Darken.Enabled = false;
+                Darken.Visible = false;
+                DarkenLabel.Visible = false;
+
+                SelectGlow.Visible = false;
+                SelectBackground.Visible = false;
+                SelectFile.Visible = true;
+            }
+        }
+
+        private void OpenSettingsClick(object sender, EventArgs e) {
+            if(!settingsOpen) {
+                Settings.xPos = this.Location.X;
+                Settings.yPos = this.Location.Y;
+                settingsOpen = true;
+                Thread t = new Thread(SettingsWindow);
+                t.IsBackground = true;
+                t.Start();
+                void SettingsWindow() {
+                    new SettingsWindow().ShowDialog();
+                    settingsOpen = false;
                 }
             }
+        }
 
-            int S(int value) {
-                return (int)(value * Scale);
+        private void SelectFileClick(object sender, EventArgs e) {
+            SelectBackgroundFile();
+        }
+
+        private void SelectBackgroundClick(object sender, EventArgs e) {
+            SelectBackgroundFile();
+        }
+
+        private void SelectBackgroundFile() {
+            pathToBackground = Util.FileChooser("Image Chooser (Background Image)", "", "All Files (*.*)|*.*|Supported Files (*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF)|*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF");
+            if (pathToBackground != null) {
+                try {
+                    backgroundImage = Util.ReadImage(pathToBackground);
+                    backgroundSelected = true;
+                    SelectFile.ForeColor = Color.White;
+                    SelectBackground.ForeColor = Color.White;
+                } catch {
+
+                }
+            } else { backgroundSelected = false; backgroundImage = new Bitmap(1, 1); if (glowSelected) backgroundImage = new Bitmap(glowImage); 
+                SelectFile.ForeColor = Color.Gainsboro;
+                SelectBackground.ForeColor = Color.Gainsboro;
             }
+            CalculateWidthHeight();
+            if ((backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0) GenerateXML.Enabled = true;
+            else GenerateXML.Enabled = false;
+        }
+
+        private void SelectGlowClick(object sender, EventArgs e) {
+            pathToGlow = Util.FileChooser("Image Chooser (Glow Image)", "", "All Files (*.*)|*.*|Supported Files (*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF)|*.PNG;*.JPG;*.BMP;*.GIF;*.TIFF;*.EXIF");
+            if (pathToGlow != null) {
+                try {
+                    glowImage = Util.ReadImage(pathToGlow);
+                    glowSelected = true;
+                    SelectGlow.ForeColor = Color.White;
+                } catch {
+
+                }
+            } else { glowSelected = false; glowImage = new Bitmap(1, 1); SelectGlow.ForeColor = Color.Gainsboro; }
+            if (glowSelected && !backgroundSelected) backgroundImage = new Bitmap(glowImage);
+            CalculateWidthHeight();
+            if ((backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0) GenerateXML.Enabled = true;
+            else GenerateXML.Enabled = false;
+        }
+
+        private void GenerateClick(object sender, EventArgs e) {
+            GenerateXML.Enabled = false;
+            GenerateXML.Text = "Generating...";
+            generatingXML = true;
+
+            bool glow = Glow.Checked;
+            bool optimize = Optimize.Checked;
+            int optimizationThreshold = (int)Threshold.Value;
+            string path = Settings.vehicleFolderPath + Settings.vehicleOutputName;
+            if (Settings.useImageNameAsVehicleName && backgroundSelected) {
+                path = Settings.vehicleFolderPath + Util.FileNameFromPath(pathToBackground) + ".xml";
+            } else if (Settings.useImageNameAsVehicleName) {
+                path = Settings.vehicleFolderPath + Util.FileNameFromPath(pathToGlow) + ".xml";
+            }
+            if (Settings.doBackups) Backups.AddBackup(path);
+
+            if (File.Exists(pathToBackground) && backgroundSelected) backgroundImage = Util.ReadImage(pathToBackground);
+            if (File.Exists(pathToGlow) && glowSelected) glowImage = Util.ReadImage(pathToGlow);
+            if (!backgroundSelected) backgroundImage = new Bitmap(glowImage);
+            CalculateWidthHeight();
+
+            int newY = (int)Math.Max((((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)Width.Value * 9),1);
+            int newX = (int)Math.Max((((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)Height.Value * 9),1);
+
+            Bitmap bgResized = new Bitmap(1, 1);
+            Bitmap gResized = new Bitmap(1, 1);
+            Bitmap bgBitmap = new Bitmap(1, 1);
+            Bitmap gBitmap = new Bitmap(1, 1);
+
+            if (ModeSelect.SelectedIndex == 1) {
+                bgResized = new Bitmap(backgroundImage, (int)Width.Value * 9, (int)Height.Value * 9);
+                if(glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
+            } else if (ModeSelect.SelectedIndex == 2) {
+                bgResized = new Bitmap(backgroundImage, (int)Width.Value * 9, newY);
+                if (glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
+            } else if (ModeSelect.SelectedIndex == 3) {
+                bgResized = new Bitmap(backgroundImage, newX, (int)Height.Value * 9);
+                if (glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
+            } else if (ModeSelect.SelectedIndex == 4) {
+                bgResized = new Bitmap(backgroundImage);
+                if (glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
+            }
+
+            bgBitmap = new Bitmap((int)(Math.Ceiling((double)bgResized.Width / 9) * 9), (int)(Math.Ceiling((double)bgResized.Height / 9) * 9));
+            Graphics gBackground = Graphics.FromImage(bgBitmap);
+            if(backgroundSelected) gBackground.FillRectangle(new SolidBrush(Color.White), new RectangleF(0, 0, bgResized.Width, bgResized.Height));
+            gBackground.DrawImage(bgResized, 0, 0, bgResized.Width, bgResized.Height);
+
+            if(glow) {
+                gBitmap = new Bitmap(bgBitmap.Width, bgBitmap.Height);
+                Graphics gGlow = Graphics.FromImage(gBitmap);
+                gGlow.DrawImage(gResized, 0, 0, gResized.Width, gResized.Height);
+            }
+            if (!backgroundSelected) { gBitmap = new Bitmap(bgBitmap); bgBitmap = new Bitmap(1, 1); }
+
+            ThreadStart starter = Generate;
+            starter += () => {
+                Invoke(new Action(() => { GenerateXML.Enabled = true; GenerateXML.Text = "Generate XML"; generatingXML = false; }));
+            };
+            Thread t = new Thread(starter);
+            t.IsBackground = true;
+            t.Start();
+            void Generate() {
+                if (!glow) Util.SaveTextFile(Generator.GenerateXML(bgBitmap, optimize, optimizationThreshold), path);
+                else Util.SaveTextFile(Generator.GenerateXML(bgBitmap, gBitmap, Darken.Checked, backgroundSelected), path);
+            }
+        }
+
+        private void CalculateWidthHeight() {
+            if (backgroundSelected || glowSelected) {
+                if(ModeSelect.SelectedIndex==0) {
+                    Width.Enabled = false;
+                    Height.Enabled = false;
+                } else if(ModeSelect.SelectedIndex==1) {
+                    Width.Enabled = true;
+                    Height.Enabled = true;
+                } else if(ModeSelect.SelectedIndex==2) {
+                    Width.Enabled = true;
+                    Height.Enabled = false;
+                    double newHeight = ((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)Width.Value * 9;
+                    Height.Value = Math.Max((int)Math.Ceiling(Math.Floor(newHeight) / 9),1);
+                } else if(ModeSelect.SelectedIndex==3) {
+                    Width.Enabled = false;
+                    Height.Enabled = true;
+                    double newWidth = ((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)Height.Value * 9;
+                    Width.Value = Math.Max((int)Math.Ceiling(Math.Floor(newWidth) / 9),1);
+                } else if(ModeSelect.SelectedIndex==4) {
+                    Width.Enabled = false;
+                    Height.Enabled = false;
+                    Width.Value = (int)Math.Ceiling((double)backgroundImage.Width / 9);
+                    Height.Value = (int)Math.Ceiling((double)backgroundImage.Height / 9);
+                }
+            } else {
+                Width.Enabled = false;
+                Height.Enabled = false;
+                Width.Value = 1;
+                Height.Value = 1;
+            }
+        }
+
+        private void WidthKeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) e.SuppressKeyPress = true;
+        }
+
+        private void HeightKeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) e.SuppressKeyPress = true;
+        }
+
+        private void ThresholdKeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) e.SuppressKeyPress = true;
         }
     }
 }
