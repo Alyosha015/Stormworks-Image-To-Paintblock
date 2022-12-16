@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace ImageConverter {
     class Settings {
-        public static string version = "v1.6.0";
+        public static string version = "v1.7.0";
 
         public static string settingsPath = "settings.xml";
         public static string backupDir = Directory.GetCurrentDirectory()+@"\backups";

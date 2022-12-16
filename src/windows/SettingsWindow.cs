@@ -9,9 +9,13 @@ namespace ImageConverter {
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
+            float dpi = this.CreateGraphics().DpiX;
             this.Icon = Icon.FromHandle(ImageConverter.Properties.Resources.IconInverted.GetHicon());
             this.Location = new Point(Settings.xPos,Settings.yPos);
             LoadSettings();
+            if(dpi==96) {
+                CenterWindowPosLabel.Text = "Load Window Centered";
+            }
         }
 
         private void UseImageNameAsVehicleName_CheckedChanged(object sender, EventArgs e) {

@@ -55,6 +55,9 @@
   <PropertyGroup>
     <ApplicationIcon>LightIcon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />

@@ -26,6 +26,8 @@ namespace ImageConverter {
         private void InitializeComponent() {
             this.ModeSelect = new System.Windows.Forms.ComboBox();
             this.SettingsPanelBackground = new System.Windows.Forms.Panel();
+            this.CutoutBackground = new System.Windows.Forms.CheckBox();
+            this.CutoutLabel = new System.Windows.Forms.Label();
             this.Darken = new System.Windows.Forms.CheckBox();
             this.DarkenLabel = new System.Windows.Forms.Label();
             this.Threshold = new System.Windows.Forms.NumericUpDown();
@@ -75,6 +77,8 @@ namespace ImageConverter {
             // SettingsPanelBackground
             // 
             this.SettingsPanelBackground.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.SettingsPanelBackground.Controls.Add(this.CutoutBackground);
+            this.SettingsPanelBackground.Controls.Add(this.CutoutLabel);
             this.SettingsPanelBackground.Controls.Add(this.Darken);
             this.SettingsPanelBackground.Controls.Add(this.DarkenLabel);
             this.SettingsPanelBackground.Controls.Add(this.Threshold);
@@ -90,9 +94,33 @@ namespace ImageConverter {
             this.SettingsPanelBackground.ForeColor = System.Drawing.Color.Black;
             this.SettingsPanelBackground.Location = new System.Drawing.Point(5, 39);
             this.SettingsPanelBackground.Name = "SettingsPanelBackground";
-            this.SettingsPanelBackground.Size = new System.Drawing.Size(185, 129);
+            this.SettingsPanelBackground.Size = new System.Drawing.Size(185, 149);
             this.SettingsPanelBackground.TabIndex = 2;
             this.SettingsPanelBackground.TabStop = true;
+            // 
+            // CutoutBackground
+            // 
+            this.CutoutBackground.AutoSize = true;
+            this.CutoutBackground.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
+            this.CutoutBackground.Enabled = false;
+            this.CutoutBackground.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CutoutBackground.ForeColor = System.Drawing.Color.Gainsboro;
+            this.CutoutBackground.Location = new System.Drawing.Point(165, 130);
+            this.CutoutBackground.Name = "CutoutBackground";
+            this.CutoutBackground.Size = new System.Drawing.Size(14, 13);
+            this.CutoutBackground.TabIndex = 12;
+            this.CutoutBackground.UseVisualStyleBackColor = false;
+            // 
+            // CutoutLabel
+            // 
+            this.CutoutLabel.AutoSize = true;
+            this.CutoutLabel.Font = new System.Drawing.Font("Arial", 10F);
+            this.CutoutLabel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.CutoutLabel.Location = new System.Drawing.Point(-1, 127);
+            this.CutoutLabel.Name = "CutoutLabel";
+            this.CutoutLabel.Size = new System.Drawing.Size(164, 19);
+            this.CutoutLabel.TabIndex = 11;
+            this.CutoutLabel.Text = "Cut-out Background?";
             // 
             // Darken
             // 
@@ -129,7 +157,7 @@ namespace ImageConverter {
             this.Threshold.Enabled = false;
             this.Threshold.Font = new System.Drawing.Font("Arial", 10F);
             this.Threshold.ForeColor = System.Drawing.Color.Gainsboro;
-            this.Threshold.Location = new System.Drawing.Point(90, 100);
+            this.Threshold.Location = new System.Drawing.Point(90, 98);
             this.Threshold.Maximum = new decimal(new int[] {
             255,
             0,
@@ -145,7 +173,7 @@ namespace ImageConverter {
             this.ThresholdPanel.AutoSize = true;
             this.ThresholdPanel.Font = new System.Drawing.Font("Arial", 10.5F);
             this.ThresholdPanel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.ThresholdPanel.Location = new System.Drawing.Point(-1, 101);
+            this.ThresholdPanel.Location = new System.Drawing.Point(-1, 99);
             this.ThresholdPanel.Name = "ThresholdPanel";
             this.ThresholdPanel.Size = new System.Drawing.Size(91, 21);
             this.ThresholdPanel.TabIndex = 8;
@@ -289,7 +317,7 @@ namespace ImageConverter {
             this.ControlPanelBackground.Controls.Add(this.SelectFile);
             this.ControlPanelBackground.Location = new System.Drawing.Point(195, 5);
             this.ControlPanelBackground.Name = "ControlPanelBackground";
-            this.ControlPanelBackground.Size = new System.Drawing.Size(185, 163);
+            this.ControlPanelBackground.Size = new System.Drawing.Size(185, 183);
             this.ControlPanelBackground.TabIndex = 3;
             // 
             // SelectBackground
@@ -301,7 +329,7 @@ namespace ImageConverter {
             this.SelectBackground.ForeColor = System.Drawing.Color.Gainsboro;
             this.SelectBackground.Location = new System.Drawing.Point(5, 4);
             this.SelectBackground.Name = "SelectBackground";
-            this.SelectBackground.Size = new System.Drawing.Size(105, 47);
+            this.SelectBackground.Size = new System.Drawing.Size(105, 55);
             this.SelectBackground.TabIndex = 10;
             this.SelectBackground.Text = "Select Background";
             this.SelectBackground.UseVisualStyleBackColor = false;
@@ -317,7 +345,7 @@ namespace ImageConverter {
             this.SelectGlow.ForeColor = System.Drawing.Color.Gainsboro;
             this.SelectGlow.Location = new System.Drawing.Point(115, 4);
             this.SelectGlow.Name = "SelectGlow";
-            this.SelectGlow.Size = new System.Drawing.Size(65, 47);
+            this.SelectGlow.Size = new System.Drawing.Size(65, 55);
             this.SelectGlow.TabIndex = 9;
             this.SelectGlow.Text = "Select Glow";
             this.SelectGlow.UseVisualStyleBackColor = false;
@@ -329,11 +357,11 @@ namespace ImageConverter {
             this.OpenSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
             this.OpenSettings.FlatAppearance.BorderSize = 0;
             this.OpenSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.OpenSettings.Font = new System.Drawing.Font("Arial", 13F);
+            this.OpenSettings.Font = new System.Drawing.Font("Arial", 13.5F);
             this.OpenSettings.ForeColor = System.Drawing.Color.Gainsboro;
-            this.OpenSettings.Location = new System.Drawing.Point(5, 110);
+            this.OpenSettings.Location = new System.Drawing.Point(5, 124);
             this.OpenSettings.Name = "OpenSettings";
-            this.OpenSettings.Size = new System.Drawing.Size(175, 47);
+            this.OpenSettings.Size = new System.Drawing.Size(175, 55);
             this.OpenSettings.TabIndex = 8;
             this.OpenSettings.Text = "Open Settings";
             this.OpenSettings.UseVisualStyleBackColor = false;
@@ -345,11 +373,11 @@ namespace ImageConverter {
             this.GenerateXML.Enabled = false;
             this.GenerateXML.FlatAppearance.BorderSize = 0;
             this.GenerateXML.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.GenerateXML.Font = new System.Drawing.Font("Arial", 13F);
+            this.GenerateXML.Font = new System.Drawing.Font("Arial", 13.5F);
             this.GenerateXML.ForeColor = System.Drawing.Color.Gainsboro;
-            this.GenerateXML.Location = new System.Drawing.Point(5, 57);
+            this.GenerateXML.Location = new System.Drawing.Point(5, 64);
             this.GenerateXML.Name = "GenerateXML";
-            this.GenerateXML.Size = new System.Drawing.Size(175, 47);
+            this.GenerateXML.Size = new System.Drawing.Size(175, 55);
             this.GenerateXML.TabIndex = 7;
             this.GenerateXML.Text = "Generate XML";
             this.GenerateXML.UseVisualStyleBackColor = false;
@@ -360,11 +388,11 @@ namespace ImageConverter {
             this.SelectFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
             this.SelectFile.FlatAppearance.BorderSize = 0;
             this.SelectFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SelectFile.Font = new System.Drawing.Font("Arial", 13F);
+            this.SelectFile.Font = new System.Drawing.Font("Arial", 13.5F);
             this.SelectFile.ForeColor = System.Drawing.Color.Gainsboro;
             this.SelectFile.Location = new System.Drawing.Point(5, 4);
             this.SelectFile.Name = "SelectFile";
-            this.SelectFile.Size = new System.Drawing.Size(175, 47);
+            this.SelectFile.Size = new System.Drawing.Size(175, 55);
             this.SelectFile.TabIndex = 0;
             this.SelectFile.Text = "Select File";
             this.SelectFile.UseVisualStyleBackColor = false;
@@ -375,7 +403,7 @@ namespace ImageConverter {
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(38)))));
-            this.ClientSize = new System.Drawing.Size(385, 173);
+            this.ClientSize = new System.Drawing.Size(385, 194);
             this.Controls.Add(this.ControlPanelBackground);
             this.Controls.Add(this.SettingsPanelBackground);
             this.Controls.Add(this.ModeSelect);
@@ -385,6 +413,7 @@ namespace ImageConverter {
             this.Text = "Image Converter";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnClose);
             this.Load += new System.EventHandler(this.MainWindow_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Key_Down);
             this.SettingsPanelBackground.ResumeLayout(false);
             this.SettingsPanelBackground.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Threshold)).EndInit();
@@ -417,6 +446,8 @@ namespace ImageConverter {
         private System.Windows.Forms.CheckBox Darken;
         private System.Windows.Forms.Label DarkenLabel;
         private System.Windows.Forms.Button SelectBackground;
+        private System.Windows.Forms.CheckBox CutoutBackground;
+        private System.Windows.Forms.Label CutoutLabel;
     }
 }
 

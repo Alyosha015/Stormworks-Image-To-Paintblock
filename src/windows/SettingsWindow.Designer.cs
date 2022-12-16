@@ -124,11 +124,11 @@ namespace ImageConverter {
             // CenterWindowPosLabel
             // 
             this.CenterWindowPosLabel.AutoSize = true;
-            this.CenterWindowPosLabel.Font = new System.Drawing.Font("Arial", 7F);
+            this.CenterWindowPosLabel.Font = new System.Drawing.Font("Arial", 7.5F);
             this.CenterWindowPosLabel.ForeColor = System.Drawing.Color.Gainsboro;
             this.CenterWindowPosLabel.Location = new System.Drawing.Point(1, 132);
             this.CenterWindowPosLabel.Name = "CenterWindowPosLabel";
-            this.CenterWindowPosLabel.Size = new System.Drawing.Size(143, 15);
+            this.CenterWindowPosLabel.Size = new System.Drawing.Size(148, 16);
             this.CenterWindowPosLabel.TabIndex = 16;
             this.CenterWindowPosLabel.Text = "Load Window Centered?";
             // 

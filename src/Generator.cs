@@ -1,9 +1,30 @@
 ﻿using System;
 using System.Text;
 using System.Drawing;
+using System.Collections.Generic;
 
 namespace ImageConverter {
     class Generator {
+        public struct Block {
+            public Block(int x, int z, int[][] pixels, String xmlColor, bool optimized, bool isAir) {
+                X = x;
+                Z = z;
+                Pixels = pixels;
+                Optimized = optimized;
+                XmlColor = xmlColor;
+                Avg = GetPixelAverage(Pixels);
+                IsAir = isAir;
+            }
+            
+            public int X { get; }
+            public int Z { get; }
+            public int[][] Pixels { get; }
+            public bool Optimized { get; }
+            public String XmlColor { get; }
+            public String Avg { get; }
+            public bool IsAir { get; set; }
+        }
+
         static string stormworksVehicleBeginingData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><vehicle data_version=\"3\" bodies_id=\"0\"><authors/><bodies><body unique_id=\"0\"><components>";
         static string stormworksVehicleEndingData = "</components></body></bodies><logic_node_links/></vehicle>";
         static string microprocessorStart = "<c d=\"microprocessor\"><o r=\"1,0,0,0,0,-1,0,1,0\" sc=\"10\"><microprocessor_definition width=\"2\" length=\"1\" id_counter=\"3\" id_counter_node=\"2\"><nodes><n id=\"1\" component_id=\"1\"><node mode=\"1\"/></n><n id=\"2\" component_id=\"3\"><node><position x=\"1\"/></node></n></nodes><group><data><inputs/><outputs/></data><components/><components_bridge><c><object id=\"1\"><in1/><out1/></object></c><c type=\"1\"><object id=\"3\"><in1 component_id=\"1\"/><out1/></object></c></components_bridge><groups/></group></microprocessor_definition><vp ";
@@ -11,16 +32,38 @@ namespace ImageConverter {
         static int imageWidthBlocks;
         static int imageHeightBlocks;
         static StringBuilder output;
+        static Block[,] blocks;
+        static bool hasBottomBorder;
+        static bool hasSideBorder;
+        static int bottomBorderSize;
+        static int sideBorderSize;
+        static string[] borderColors = {
+            "FFFFFF",
+            "E2E2E2",
+            "C6C6C6",
+            "AAAAAA",
+            "8D8D8D",
+            "717171",
+            "555555",
+            "383838",
+            "1C1C1C",
+        };
+        static string cornerColor = "";
 
         static StringBuilder logicLinks;
         static int onOffNodeX;
         static int onOffNodeZ;
 
-        public static string GenerateXML(Bitmap image, bool optimizePaintblocks, int optimizationThreshold) {
+        public static string GenerateXML(Bitmap image, bool optimizePaintblocks, int optimizationThreshold, bool cutout, int bottomBorder, int sideBorder) {
             output = new StringBuilder();
+            hasBottomBorder = bottomBorder != 0;
+            hasSideBorder = sideBorder != 0;
+            bottomBorderSize = bottomBorder;
+            sideBorderSize = sideBorder;
 
             imageWidthBlocks = image.Width / 9;
             imageHeightBlocks = image.Height / 9;
+            blocks = new Block[imageHeightBlocks, imageWidthBlocks];
 
             output.Append(stormworksVehicleBeginingData);
 
@@ -38,19 +81,75 @@ namespace ImageConverter {
                         }
                     }
 
-                    if (optimizePaintblocks) {
-                        if (IsPixelDataInThreshold(pixels, optimizationThreshold)) {
+                    if(!cutout) {
+                        if (optimizePaintblocks && IsPixelDataInThreshold(pixels, optimizationThreshold)) {
                             AddBlockData(GetPixelAverage(pixels), blockY, blockX);
                         } else {
-                            AddPaintBlockData(xmlColorData, blockY, blockX);
+                            AddPaintableSignData(xmlColorData, blockY, blockX);
                         }
                     } else {
-                        AddPaintBlockData(xmlColorData, blockY, blockX);
+                        blocks[blockY, blockX] = new Block(blockY, blockX, pixels, xmlColorData, IsPixelDataInThreshold(pixels, optimizationThreshold), false);
+                    }
+                }
+            }
+            if (cutout) {
+                int[][] cornerPixels = new int[81][];
+                int blackPixels = (bottomBorderSize * 9) + (sideBorderSize * (9 - bottomBorderSize));
+                for (int i = 0; i < 81; i++) {
+                    if (i < blackPixels) cornerPixels[i] = new int[] { 0, 0, 0 };
+                    else cornerPixels[i] = new int[] { 255, 255, 255 };
+                }
+                cornerColor = GetPixelAverage(cornerPixels);
+                for(int x=0;x<imageWidthBlocks;x++) {
+                    FloodFill(x, 0);
+                    FloodFill(x, imageHeightBlocks-1);
+                }
+                for(int y=0;y<imageHeightBlocks;y++) {
+                    FloodFill(0, y);
+                    FloodFill(imageWidthBlocks-1, y);
+                }
+                for (int blockX = 0; blockX < imageWidthBlocks; blockX++) {
+                    for (int blockY = 0; blockY < imageHeightBlocks; blockY++) {
+                        Block block = blocks[blockY, blockX];
+                        if (block.Optimized && !block.IsAir) {
+                            AddBlockData(block.Avg, blockY, blockX);
+                        } else if(!block.IsAir) {
+                            AddPaintableSignData(block.XmlColor, blockY, blockX);
+                        }
                     }
                 }
             }
             output.Append(stormworksVehicleEndingData);
             return output.ToString();
+        }
+
+        private static void FloodFill(int xx,int yy) {
+            if (blocks[yy, xx].IsAir) return;
+            Queue<Point> q = new Queue<Point>();
+            q.Enqueue(new Point(xx, yy));
+            while(!(q.Count==0)) {
+                Point p = q.Dequeue();
+                int x = p.X;
+                int y = p.Y;
+                if (x < 0 || x >= imageWidthBlocks || y < 0 || y >= imageHeightBlocks || blocks[y, x].IsAir == true) {
+                    continue;
+                }
+                if (y == 0 && hasBottomBorder && string.Equals(blocks[y, x].Avg, borderColors[bottomBorderSize])) {
+
+                } else if (x == 0 && hasSideBorder && string.Equals(blocks[y, x].Avg, borderColors[sideBorderSize])) {
+
+                } else if (y == 0 && hasBottomBorder && x == 0 && hasSideBorder && string.Equals(blocks[y, x].Avg, cornerColor)) {
+
+                } else if (!string.Equals(blocks[y, x].Avg, "FFFFFF")) {
+                    continue;
+                }
+
+                blocks[y, x].IsAir = true;
+                q.Enqueue(new Point(x + 1, y));
+                q.Enqueue(new Point(x - 1, y));
+                q.Enqueue(new Point(x, y + 1));
+                q.Enqueue(new Point(x, y - 1));
+            }
         }
 
         public static string GenerateXML(Bitmap background, Bitmap glowBitmap, bool darken, bool backgroundSelected) {
@@ -139,7 +238,7 @@ namespace ImageConverter {
             logicLinks.Append("<logic_node_link type=\"4\"><voxel_pos_0 x=\"" + (onOffNodeX - 1) + "\" z=\"" + (onOffNodeZ + 1) + "\"/><voxel_pos_1 x=\"" + x + "\" z=\"" + z + "\"/></logic_node_link>");
         }
 
-        static void AddPaintBlockData(string colorData, int x, int z) {
+        static void AddPaintableSignData(string colorData, int x, int z) {
             x -= imageHeightBlocks / 2;
             z -= imageWidthBlocks / 2;
             output.Append("<c d=\"sign_na\"><o r=\"1,0,0,0,1,0,0,0,1\" sc=\"6\" gc=\"");
@@ -190,10 +289,15 @@ namespace ImageConverter {
         }
 
         static string GetPixelAverage(int[][] pixels) {
-            int rAverage = (GetGreatestValue(pixels, 0) + GetSmallestValue(pixels, 0)) / 2;
-            int gAverage = (GetGreatestValue(pixels, 1) + GetSmallestValue(pixels, 1)) / 2;
-            int bAverage = (GetGreatestValue(pixels, 2) + GetSmallestValue(pixels, 2)) / 2;
-            return ColorToHex(Color.FromArgb(rAverage, gAverage, bAverage), false);
+            int rAverage = 0;
+            int gAverage = 0;
+            int bAverage = 0;
+            for(int i=0;i<81;i++) {
+                rAverage += pixels[i][0];
+                gAverage += pixels[i][1];
+                bAverage += pixels[i][2];
+            }
+            return ColorToHex(Color.FromArgb(rAverage/81, gAverage/81, bAverage/81), false);
         }
     }
 }
