@@ -1,20 +1,31 @@
 # Stormworks Image To Paintblock Converter
 A windows program to convert images into both types of stormworks paintblocks.
 
-## How To Download
-Click on "releases" on the right side of the screen. On the latest release, click on "ImageConverter.zip" to download it, (the first file listed in assets).
-
 ## Tutorial
 ![v1 7 0ImageConverterGUI](https://user-images.githubusercontent.com/99307745/211409873-f66425fd-d3af-433a-a0ec-c39a3a369f4d.png)
-1. After downloading, extract the files from the zip folder to where you want to store the program, then run the exe.
-2. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
-3. **(If you're generating paintable signs)** Click ```Select File``` and choose the image to import in the file chooser.
-4. **(If you're generating paintable indicators)** Click ```Select Background``` to choose the image shown on the background of a paintable indicator, and ```Select Glow``` to choose the image shown when the paintable indicator is turned on. Setting the background image is optional. Additionally, if you don't want the glow image to be darkened (which helps with how bright they are) uncheck the ```Darken?``` checkbox.
-5. Choose a mode for the paintblock converter with the dropdown in the top left. These control how the size in blocks for the generated xml is set. (The names should be mostly self-explanatory, but the different modes are explained below in "Resizing Modes").
-6. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
-7. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for the program to consider a block of pixels a single color and replacing it with a block. (More information in "Paintblock Optimizing").
-8. **(If you're generating paintable signs and have optimization turned on)** Check the ```Cutout Background``` checkbox if you want the program to cutout the background of a blueprint image, and only generate blocks for the actual drawings. This only works for blueprints with a pure white background. (An example of this feature used is shown below if you scroll down).
-9. Click ```Generate XML```, and the XML file will be generated and placed directly into your stormworks vehicle folder. This usually takes milliseconds, but for images hundreds of blocks in size it can take a couple seconds. When generating the ```Generate XML``` button will switch to saying ```Generating...``` and be disabled, and switch back to normal when finished.
+### How To Download
+Click on "releases" on the right side of the screen. On the latest release, click on "ImageConverter.zip" to download it, (the first file listed in assets). After downloading, extract the files from the zip folder to where you want to store the program. If you ever want to get rid of it, you only have to delete that folder because the exe doesn't get installed anywhere.
+
+### How To Use (Fast version, doesn't explain any of the features):
+1. Click ```Select File``` and choose the image to import in the file chooser.
+2. Click the ```Select Mode``` dropdown and select a mode for how the image is resized. The modes are:
+> * Custom Dimensions - Allows stretching the image with any width and height values.
+> * Custom Width - Allows entering a width for the image, the height is calculated automatically to keep the aspect ratio.
+> * Custom Height - Allows entering a height for the image, the width is calculated automatically to keep the aspect ratio.
+> * Don't Resize - The image isn't resized, and is copied pixel for pixel onto paintblocks.
+3. Depending on which mode you chose, enter the width and/or height for the output image in blocks.
+4. Click ```Generate XML```, and the vehicle will be generated and saved to the vehicle folder automatically. This usually takes milliseconds, but for images hundreds of blocks in size it can take a couple seconds. When generating the ```Generate XML``` button will switch to ```Generating...``` and be disabled, and switch back to normal when finished. You can open the vehicle in stormworks, by default it will be saved as "Generated" and have a blank thumbnail.
+5. If you scroll down you can see example images of what the optimization and cut-out background features do, and I explain them in the more detailed tutorial.
+
+### How To Use (explains more):
+1. If you plan to generate paintable indicators, check the ```Glow?``` checkbox.
+2. **(If you're generating paintable signs)** Click ```Select File``` and choose the image to import in the file chooser.
+3. **(If you're generating paintable indicators)** Click ```Select Background``` to choose the image shown on the background of a paintable indicator, and ```Select Glow``` to choose the image shown when the paintable indicator is turned on. Setting the background image is optional. Additionally, if you don't want the glow image to be darkened (which helps with how bright they are) uncheck the ```Darken?``` checkbox.
+4. Choose a mode for the paintblock converter with the dropdown in the top left. These control how the size in blocks for the generated xml is set. (The names should be mostly self-explanatory, but the different modes are explained below in "Resizing Modes").
+5. Set the size of the generated image, in the width/height, what the programs allows to be edited depends on which mode you choose.
+6. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for the program to consider a block of pixels a single color and replacing it with a block. (More information in "Paintblock Optimizing").
+7. **(If you're generating paintable signs and have optimization turned on)** Check the ```Cutout Background``` checkbox if you want the program to cutout the background of a blueprint image, and only generate blocks for the actual drawings. This only works for blueprints with a pure white background. (An example of this feature used is shown below if you scroll down).
+8. Click ```Generate XML```, and the vehicle will be generated and saved to the vehicle folder automatically. This usually takes milliseconds, but for images hundreds of blocks in size it can take a couple seconds. When generating the ```Generate XML``` button will switch to ```Generating...``` and be disabled, and switch back to normal when finished.
 
 ## Resizing Modes
 1. ```Custom Dimensions``` - Width and Height can be choosen by user, and the image is stretched to fit the new dimensions.
