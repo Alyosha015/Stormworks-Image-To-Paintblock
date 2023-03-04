@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace ImageConverter {
     class Settings {
-        public static string version = "v1.7.0";
+        public static string version = "v1.7.1";
 
         public static string settingsPath = "settings.xml";
         public static string backupDir = Directory.GetCurrentDirectory()+@"\backups";
@@ -28,7 +28,7 @@ namespace ImageConverter {
             XmlDocument xml = new XmlDocument();
             try {
                 xml.Load(settingsPath);
-            } catch(Exception e) {
+            } catch(Exception) {
                 GenerateNewSettings();
                 CalculateWindowPos();
                 return;
@@ -60,15 +60,19 @@ namespace ImageConverter {
         }
 
         public static void SaveOnClose() {
-            XmlDocument xml = new XmlDocument();
-            xml.Load(settingsPath);
-            XmlNodeList settings = xml.SelectNodes("/settings");
-            foreach(XmlNode setting in settings) {
-                if (setting["monitorNum"] != null) setting["monitorNum"].InnerText = currentMonitor.ToString();
-                if (setting["xPos"] != null) setting["xPos"].InnerText = xPos.ToString();
-                if (setting["yPos"] != null) setting["yPos"].InnerText = yPos.ToString();
+            try {
+                XmlDocument xml = new XmlDocument();
+                xml.Load(settingsPath);
+                XmlNodeList settings = xml.SelectNodes("/settings");
+                foreach (XmlNode setting in settings) {
+                    if (setting["monitorNum"] != null) setting["monitorNum"].InnerText = currentMonitor.ToString();
+                    if (setting["xPos"] != null) setting["xPos"].InnerText = xPos.ToString();
+                    if (setting["yPos"] != null) setting["yPos"].InnerText = yPos.ToString();
+                }
+                xml.Save(settingsPath);
+            } catch(Exception) {
+
             }
-            xml.Save(settingsPath);
         }
 
         public static void SaveSettings() {

@@ -9,9 +9,9 @@ namespace ImageConverter {
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
-            float dpi = this.CreateGraphics().DpiX;
-            this.Icon = Icon.FromHandle(ImageConverter.Properties.Resources.IconInverted.GetHicon());
-            this.Location = new Point(Settings.xPos,Settings.yPos);
+            float dpi = CreateGraphics().DpiX;
+            Icon = Icon.FromHandle(Properties.Resources.IconInverted.GetHicon());
+            Location = new Point(Settings.xPos,Settings.yPos);
             LoadSettings();
             if(dpi==96) {
                 CenterWindowPosLabel.Text = "Load Window Centered";
@@ -27,7 +27,7 @@ namespace ImageConverter {
         }
 
         private void CloseWindow(object sender, EventArgs e) {
-            this.Close();
+            Close();
         }
 
         private void SaveSettings(object sender, EventArgs e) {

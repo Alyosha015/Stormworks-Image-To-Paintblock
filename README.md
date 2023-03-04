@@ -2,7 +2,7 @@
 A windows program to convert images into both types of stormworks paintblocks.
 
 ## Tutorial
-![v1 7 0ImageConverterGUI](https://user-images.githubusercontent.com/99307745/211409873-f66425fd-d3af-433a-a0ec-c39a3a369f4d.png)
+![ImageConverter v1 7 1 GUI](https://user-images.githubusercontent.com/99307745/222921141-2dc21d32-92d9-40ab-92e4-9101b3d68d41.png)
 ### How To Download
 Click on "releases" on the right side of the screen. On the latest release, click on "ImageConverter.zip" to download it, (the first file listed in assets). After downloading, extract the files from the zip folder to where you want to store the program. If you ever want to get rid of it, you only have to delete that folder because the exe doesn't get installed anywhere.
 
@@ -26,6 +26,7 @@ Click on "releases" on the right side of the screen. On the latest release, clic
 6. Check the ```Optimize?``` checkbox if you want the program to optimize the generated image with regular blocks (helps with lag by using regular blocks instead of paintblocks for parts of the image where all the pixels are the same/similar color). If you choose to optimize the image, set the threshold for the program to consider a block of pixels a single color and replacing it with a block. (More information in "Paintblock Optimizing").
 7. **(If you're generating paintable signs and have optimization turned on)** Check the ```Cutout Background``` checkbox if you want the program to cutout the background of a blueprint image, and only generate blocks for the actual drawings. This only works for blueprints with a pure white background. (An example of this feature used is shown below if you scroll down).
 8. Click ```Generate XML```, and the vehicle will be generated and saved to the vehicle folder automatically. This usually takes milliseconds, but for images hundreds of blocks in size it can take a couple seconds. When generating the ```Generate XML``` button will switch to ```Generating...``` and be disabled, and switch back to normal when finished.
+9. If you are generating a blueprint, in many cases the centerline of the vehicle drawn on them isn't aligned with the center of the paintblocks, making building with symmetry difficult. This can be fixed by changing the X and Y inputs under the ```Open Settings``` button, which shift the image on the paintblocks by up to 8 pixels in any direction. A positive X value moves the image to the right, and a negative value to the left. A positive Y value moves the image down, and a negative value up.
 
 ## Resizing Modes
 1. ```Custom Dimensions``` - Width and Height can be choosen by user, and the image is stretched to fit the new dimensions.
