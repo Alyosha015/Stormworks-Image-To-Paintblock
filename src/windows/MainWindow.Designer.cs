@@ -26,21 +26,24 @@ namespace ImageConverter {
         private void InitializeComponent() {
             this.ModeSelect = new System.Windows.Forms.ComboBox();
             this.SettingsPanelBackground = new System.Windows.Forms.Panel();
+            this.PixelContrastUDC = new System.Windows.Forms.NumericUpDown();
+            this.PixelContrastLabel = new System.Windows.Forms.Label();
             this.CutoutBackground = new System.Windows.Forms.CheckBox();
             this.CutoutLabel = new System.Windows.Forms.Label();
             this.Darken = new System.Windows.Forms.CheckBox();
             this.DarkenLabel = new System.Windows.Forms.Label();
             this.Threshold = new System.Windows.Forms.NumericUpDown();
-            this.ThresholdPanel = new System.Windows.Forms.Label();
+            this.ThresholdLabel = new System.Windows.Forms.Label();
             this.Glow = new System.Windows.Forms.CheckBox();
             this.Optimize = new System.Windows.Forms.CheckBox();
             this.GlowLabel = new System.Windows.Forms.Label();
             this.OptimizeLabel = new System.Windows.Forms.Label();
-            this.Height = new System.Windows.Forms.NumericUpDown();
+            this.HeightUDC = new System.Windows.Forms.NumericUpDown();
             this.HeightLabel = new System.Windows.Forms.Label();
-            this.Width = new System.Windows.Forms.NumericUpDown();
+            this.WidthUDC = new System.Windows.Forms.NumericUpDown();
             this.WidthLabel = new System.Windows.Forms.Label();
             this.ControlPanelBackground = new System.Windows.Forms.Panel();
+            this.Ruler = new System.Windows.Forms.Button();
             this.YOffset = new System.Windows.Forms.NumericUpDown();
             this.YOffsetLabel = new System.Windows.Forms.Label();
             this.SelectBackground = new System.Windows.Forms.Button();
@@ -51,9 +54,10 @@ namespace ImageConverter {
             this.GenerateXML = new System.Windows.Forms.Button();
             this.SelectFile = new System.Windows.Forms.Button();
             this.SettingsPanelBackground.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PixelContrastUDC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Threshold)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Height)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Width)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HeightUDC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WidthUDC)).BeginInit();
             this.ControlPanelBackground.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.YOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.XOffset)).BeginInit();
@@ -83,26 +87,67 @@ namespace ImageConverter {
             // SettingsPanelBackground
             // 
             this.SettingsPanelBackground.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.SettingsPanelBackground.Controls.Add(this.PixelContrastUDC);
+            this.SettingsPanelBackground.Controls.Add(this.PixelContrastLabel);
             this.SettingsPanelBackground.Controls.Add(this.CutoutBackground);
             this.SettingsPanelBackground.Controls.Add(this.CutoutLabel);
             this.SettingsPanelBackground.Controls.Add(this.Darken);
             this.SettingsPanelBackground.Controls.Add(this.DarkenLabel);
             this.SettingsPanelBackground.Controls.Add(this.Threshold);
-            this.SettingsPanelBackground.Controls.Add(this.ThresholdPanel);
+            this.SettingsPanelBackground.Controls.Add(this.ThresholdLabel);
             this.SettingsPanelBackground.Controls.Add(this.Glow);
             this.SettingsPanelBackground.Controls.Add(this.Optimize);
             this.SettingsPanelBackground.Controls.Add(this.GlowLabel);
             this.SettingsPanelBackground.Controls.Add(this.OptimizeLabel);
-            this.SettingsPanelBackground.Controls.Add(this.Height);
+            this.SettingsPanelBackground.Controls.Add(this.HeightUDC);
             this.SettingsPanelBackground.Controls.Add(this.HeightLabel);
-            this.SettingsPanelBackground.Controls.Add(this.Width);
+            this.SettingsPanelBackground.Controls.Add(this.WidthUDC);
             this.SettingsPanelBackground.Controls.Add(this.WidthLabel);
             this.SettingsPanelBackground.ForeColor = System.Drawing.Color.Black;
             this.SettingsPanelBackground.Location = new System.Drawing.Point(5, 39);
             this.SettingsPanelBackground.Name = "SettingsPanelBackground";
-            this.SettingsPanelBackground.Size = new System.Drawing.Size(185, 153);
+            this.SettingsPanelBackground.Size = new System.Drawing.Size(185, 187);
             this.SettingsPanelBackground.TabIndex = 2;
             this.SettingsPanelBackground.TabStop = true;
+            // 
+            // PixelContrastUDC
+            // 
+            this.PixelContrastUDC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
+            this.PixelContrastUDC.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PixelContrastUDC.DecimalPlaces = 2;
+            this.PixelContrastUDC.Font = new System.Drawing.Font("Arial", 10F);
+            this.PixelContrastUDC.ForeColor = System.Drawing.Color.Gainsboro;
+            this.PixelContrastUDC.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.PixelContrastUDC.Location = new System.Drawing.Point(90, 159);
+            this.PixelContrastUDC.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.PixelContrastUDC.Name = "PixelContrastUDC";
+            this.PixelContrastUDC.Size = new System.Drawing.Size(90, 23);
+            this.PixelContrastUDC.TabIndex = 13;
+            this.PixelContrastUDC.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.PixelContrastUDC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ContrastKeyDown);
+            // 
+            // PixelContrastLabel
+            // 
+            this.PixelContrastLabel.AutoSize = true;
+            this.PixelContrastLabel.Font = new System.Drawing.Font("Arial", 11F);
+            this.PixelContrastLabel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.PixelContrastLabel.Location = new System.Drawing.Point(-1, 159);
+            this.PixelContrastLabel.Name = "PixelContrastLabel";
+            this.PixelContrastLabel.Size = new System.Drawing.Size(81, 22);
+            this.PixelContrastLabel.TabIndex = 14;
+            this.PixelContrastLabel.Text = "Contrast";
             // 
             // CutoutBackground
             // 
@@ -111,7 +156,7 @@ namespace ImageConverter {
             this.CutoutBackground.Enabled = false;
             this.CutoutBackground.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CutoutBackground.ForeColor = System.Drawing.Color.Gainsboro;
-            this.CutoutBackground.Location = new System.Drawing.Point(165, 130);
+            this.CutoutBackground.Location = new System.Drawing.Point(165, 134);
             this.CutoutBackground.Name = "CutoutBackground";
             this.CutoutBackground.Size = new System.Drawing.Size(14, 13);
             this.CutoutBackground.TabIndex = 12;
@@ -122,7 +167,7 @@ namespace ImageConverter {
             this.CutoutLabel.AutoSize = true;
             this.CutoutLabel.Font = new System.Drawing.Font("Arial", 10F);
             this.CutoutLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.CutoutLabel.Location = new System.Drawing.Point(-1, 127);
+            this.CutoutLabel.Location = new System.Drawing.Point(-1, 131);
             this.CutoutLabel.Name = "CutoutLabel";
             this.CutoutLabel.Size = new System.Drawing.Size(164, 19);
             this.CutoutLabel.TabIndex = 11;
@@ -174,16 +219,16 @@ namespace ImageConverter {
             this.Threshold.TabIndex = 5;
             this.Threshold.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ThresholdKeyDown);
             // 
-            // ThresholdPanel
+            // ThresholdLabel
             // 
-            this.ThresholdPanel.AutoSize = true;
-            this.ThresholdPanel.Font = new System.Drawing.Font("Arial", 10.5F);
-            this.ThresholdPanel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.ThresholdPanel.Location = new System.Drawing.Point(-1, 99);
-            this.ThresholdPanel.Name = "ThresholdPanel";
-            this.ThresholdPanel.Size = new System.Drawing.Size(91, 21);
-            this.ThresholdPanel.TabIndex = 8;
-            this.ThresholdPanel.Text = "Threshold";
+            this.ThresholdLabel.AutoSize = true;
+            this.ThresholdLabel.Font = new System.Drawing.Font("Arial", 10.5F);
+            this.ThresholdLabel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.ThresholdLabel.Location = new System.Drawing.Point(-1, 99);
+            this.ThresholdLabel.Name = "ThresholdLabel";
+            this.ThresholdLabel.Size = new System.Drawing.Size(91, 21);
+            this.ThresholdLabel.TabIndex = 8;
+            this.ThresholdLabel.Text = "Threshold";
             // 
             // Glow
             // 
@@ -233,34 +278,34 @@ namespace ImageConverter {
             this.OptimizeLabel.TabIndex = 4;
             this.OptimizeLabel.Text = "Optimize?";
             // 
-            // Height
+            // HeightUDC
             // 
-            this.Height.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
-            this.Height.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.Height.Enabled = false;
-            this.Height.Font = new System.Drawing.Font("Arial", 10F);
-            this.Height.ForeColor = System.Drawing.Color.Gainsboro;
-            this.Height.Location = new System.Drawing.Point(60, 40);
-            this.Height.Maximum = new decimal(new int[] {
+            this.HeightUDC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
+            this.HeightUDC.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.HeightUDC.Enabled = false;
+            this.HeightUDC.Font = new System.Drawing.Font("Arial", 10F);
+            this.HeightUDC.ForeColor = System.Drawing.Color.Gainsboro;
+            this.HeightUDC.Location = new System.Drawing.Point(60, 40);
+            this.HeightUDC.Maximum = new decimal(new int[] {
             2147483647,
             0,
             0,
             0});
-            this.Height.Minimum = new decimal(new int[] {
+            this.HeightUDC.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.Height.Name = "Height";
-            this.Height.Size = new System.Drawing.Size(120, 23);
-            this.Height.TabIndex = 3;
-            this.Height.Value = new decimal(new int[] {
+            this.HeightUDC.Name = "HeightUDC";
+            this.HeightUDC.Size = new System.Drawing.Size(120, 23);
+            this.HeightUDC.TabIndex = 3;
+            this.HeightUDC.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.Height.ValueChanged += new System.EventHandler(this.Height_ValueChanged);
-            this.Height.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HeightKeyDown);
+            this.HeightUDC.ValueChanged += new System.EventHandler(this.Height_ValueChanged);
+            this.HeightUDC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HeightKeyDown);
             // 
             // HeightLabel
             // 
@@ -273,34 +318,34 @@ namespace ImageConverter {
             this.HeightLabel.TabIndex = 2;
             this.HeightLabel.Text = "Height";
             // 
-            // Width
+            // WidthUDC
             // 
-            this.Width.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
-            this.Width.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.Width.Enabled = false;
-            this.Width.Font = new System.Drawing.Font("Arial", 10F);
-            this.Width.ForeColor = System.Drawing.Color.Gainsboro;
-            this.Width.Location = new System.Drawing.Point(60, 7);
-            this.Width.Maximum = new decimal(new int[] {
+            this.WidthUDC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
+            this.WidthUDC.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.WidthUDC.Enabled = false;
+            this.WidthUDC.Font = new System.Drawing.Font("Arial", 10F);
+            this.WidthUDC.ForeColor = System.Drawing.Color.Gainsboro;
+            this.WidthUDC.Location = new System.Drawing.Point(60, 7);
+            this.WidthUDC.Maximum = new decimal(new int[] {
             2147483647,
             0,
             0,
             0});
-            this.Width.Minimum = new decimal(new int[] {
+            this.WidthUDC.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.Width.Name = "Width";
-            this.Width.Size = new System.Drawing.Size(120, 23);
-            this.Width.TabIndex = 2;
-            this.Width.Value = new decimal(new int[] {
+            this.WidthUDC.Name = "WidthUDC";
+            this.WidthUDC.Size = new System.Drawing.Size(120, 23);
+            this.WidthUDC.TabIndex = 2;
+            this.WidthUDC.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.Width.ValueChanged += new System.EventHandler(this.Width_ValueChanged);
-            this.Width.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WidthKeyDown);
+            this.WidthUDC.ValueChanged += new System.EventHandler(this.Width_ValueChanged);
+            this.WidthUDC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WidthKeyDown);
             // 
             // WidthLabel
             // 
@@ -316,6 +361,7 @@ namespace ImageConverter {
             // ControlPanelBackground
             // 
             this.ControlPanelBackground.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.ControlPanelBackground.Controls.Add(this.Ruler);
             this.ControlPanelBackground.Controls.Add(this.YOffset);
             this.ControlPanelBackground.Controls.Add(this.YOffsetLabel);
             this.ControlPanelBackground.Controls.Add(this.SelectBackground);
@@ -327,8 +373,25 @@ namespace ImageConverter {
             this.ControlPanelBackground.Controls.Add(this.SelectFile);
             this.ControlPanelBackground.Location = new System.Drawing.Point(195, 5);
             this.ControlPanelBackground.Name = "ControlPanelBackground";
-            this.ControlPanelBackground.Size = new System.Drawing.Size(185, 187);
+            this.ControlPanelBackground.Size = new System.Drawing.Size(185, 221);
             this.ControlPanelBackground.TabIndex = 3;
+            // 
+            // Ruler
+            // 
+            this.Ruler.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
+            this.Ruler.Enabled = false;
+            this.Ruler.FlatAppearance.BorderSize = 0;
+            this.Ruler.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Ruler.Font = new System.Drawing.Font("Arial", 11F);
+            this.Ruler.ForeColor = System.Drawing.Color.Gainsboro;
+            this.Ruler.Location = new System.Drawing.Point(5, 185);
+            this.Ruler.Name = "Ruler";
+            this.Ruler.Size = new System.Drawing.Size(175, 30);
+            this.Ruler.TabIndex = 17;
+            this.Ruler.TabStop = false;
+            this.Ruler.Text = "Scale By Segment";
+            this.Ruler.UseVisualStyleBackColor = false;
+            this.Ruler.Click += new System.EventHandler(this.RulerClick);
             // 
             // YOffset
             // 
@@ -336,7 +399,7 @@ namespace ImageConverter {
             this.YOffset.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.YOffset.Font = new System.Drawing.Font("Arial", 10F);
             this.YOffset.ForeColor = System.Drawing.Color.Gainsboro;
-            this.YOffset.Location = new System.Drawing.Point(115, 159);
+            this.YOffset.Location = new System.Drawing.Point(115, 157);
             this.YOffset.Maximum = new decimal(new int[] {
             8,
             0,
@@ -350,6 +413,7 @@ namespace ImageConverter {
             this.YOffset.Name = "YOffset";
             this.YOffset.Size = new System.Drawing.Size(65, 23);
             this.YOffset.TabIndex = 16;
+            this.YOffset.TabStop = false;
             this.YOffset.KeyDown += new System.Windows.Forms.KeyEventHandler(this.YOffsetKeyDown);
             // 
             // YOffsetLabel
@@ -357,7 +421,7 @@ namespace ImageConverter {
             this.YOffsetLabel.AutoSize = true;
             this.YOffsetLabel.Font = new System.Drawing.Font("Arial", 10.5F);
             this.YOffsetLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.YOffsetLabel.Location = new System.Drawing.Point(95, 160);
+            this.YOffsetLabel.Location = new System.Drawing.Point(95, 158);
             this.YOffsetLabel.Name = "YOffsetLabel";
             this.YOffsetLabel.Size = new System.Drawing.Size(22, 21);
             this.YOffsetLabel.TabIndex = 15;
@@ -385,7 +449,7 @@ namespace ImageConverter {
             this.XOffset.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.XOffset.Font = new System.Drawing.Font("Arial", 10F);
             this.XOffset.ForeColor = System.Drawing.Color.Gainsboro;
-            this.XOffset.Location = new System.Drawing.Point(25, 159);
+            this.XOffset.Location = new System.Drawing.Point(25, 157);
             this.XOffset.Maximum = new decimal(new int[] {
             8,
             0,
@@ -399,6 +463,7 @@ namespace ImageConverter {
             this.XOffset.Name = "XOffset";
             this.XOffset.Size = new System.Drawing.Size(65, 23);
             this.XOffset.TabIndex = 14;
+            this.XOffset.TabStop = false;
             this.XOffset.KeyDown += new System.Windows.Forms.KeyEventHandler(this.XOffsetKeyDown);
             // 
             // SelectGlow
@@ -422,7 +487,7 @@ namespace ImageConverter {
             this.XOffsetLabel.AutoSize = true;
             this.XOffsetLabel.Font = new System.Drawing.Font("Arial", 10.5F);
             this.XOffsetLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.XOffsetLabel.Location = new System.Drawing.Point(5, 160);
+            this.XOffsetLabel.Location = new System.Drawing.Point(5, 158);
             this.XOffsetLabel.Name = "XOffsetLabel";
             this.XOffsetLabel.Size = new System.Drawing.Size(21, 21);
             this.XOffsetLabel.TabIndex = 13;
@@ -439,6 +504,7 @@ namespace ImageConverter {
             this.OpenSettings.Name = "OpenSettings";
             this.OpenSettings.Size = new System.Drawing.Size(175, 46);
             this.OpenSettings.TabIndex = 8;
+            this.OpenSettings.TabStop = false;
             this.OpenSettings.Text = "Open Settings";
             this.OpenSettings.UseVisualStyleBackColor = false;
             this.OpenSettings.Click += new System.EventHandler(this.OpenSettingsClick);
@@ -453,8 +519,10 @@ namespace ImageConverter {
             this.GenerateXML.ForeColor = System.Drawing.Color.Gainsboro;
             this.GenerateXML.Location = new System.Drawing.Point(5, 55);
             this.GenerateXML.Name = "GenerateXML";
+            this.GenerateXML.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.GenerateXML.Size = new System.Drawing.Size(175, 46);
             this.GenerateXML.TabIndex = 7;
+            this.GenerateXML.TabStop = false;
             this.GenerateXML.Text = "Generate XML";
             this.GenerateXML.UseVisualStyleBackColor = false;
             this.GenerateXML.Click += new System.EventHandler(this.GenerateClick);
@@ -479,7 +547,7 @@ namespace ImageConverter {
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(38)))));
-            this.ClientSize = new System.Drawing.Size(385, 196);
+            this.ClientSize = new System.Drawing.Size(385, 230);
             this.Controls.Add(this.ControlPanelBackground);
             this.Controls.Add(this.SettingsPanelBackground);
             this.Controls.Add(this.ModeSelect);
@@ -492,9 +560,10 @@ namespace ImageConverter {
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Key_Down);
             this.SettingsPanelBackground.ResumeLayout(false);
             this.SettingsPanelBackground.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PixelContrastUDC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Threshold)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Height)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Width)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HeightUDC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WidthUDC)).EndInit();
             this.ControlPanelBackground.ResumeLayout(false);
             this.ControlPanelBackground.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.YOffset)).EndInit();
@@ -508,14 +577,14 @@ namespace ImageConverter {
         private System.Windows.Forms.ComboBox ModeSelect;
         private System.Windows.Forms.Panel SettingsPanelBackground;
         private System.Windows.Forms.Label WidthLabel;
-        private System.Windows.Forms.NumericUpDown Width;
-        private System.Windows.Forms.NumericUpDown Height;
+        private System.Windows.Forms.NumericUpDown WidthUDC;
+        private System.Windows.Forms.NumericUpDown HeightUDC;
         private System.Windows.Forms.Label HeightLabel;
         private System.Windows.Forms.Label OptimizeLabel;
         private System.Windows.Forms.Label GlowLabel;
         private System.Windows.Forms.CheckBox Optimize;
         private System.Windows.Forms.CheckBox Glow;
-        private System.Windows.Forms.Label ThresholdPanel;
+        private System.Windows.Forms.Label ThresholdLabel;
         private System.Windows.Forms.NumericUpDown Threshold;
         private System.Windows.Forms.Panel ControlPanelBackground;
         private System.Windows.Forms.Button SelectFile;
@@ -531,6 +600,9 @@ namespace ImageConverter {
         private System.Windows.Forms.Label XOffsetLabel;
         private System.Windows.Forms.NumericUpDown YOffset;
         private System.Windows.Forms.Label YOffsetLabel;
+        private System.Windows.Forms.NumericUpDown PixelContrastUDC;
+        private System.Windows.Forms.Label PixelContrastLabel;
+        private System.Windows.Forms.Button Ruler;
     }
 }
 

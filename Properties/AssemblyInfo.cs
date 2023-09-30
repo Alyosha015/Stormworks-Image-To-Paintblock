@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ImageConverter v1.7.1")]
+[assembly: AssemblyTitle("ImageConverter v1.8.0")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ImageConverter v1.7.1")]
+[assembly: AssemblyProduct("ImageConverter v1.8.0")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("46f38595-fc1a-4ac1-9743-4dcd5db07023")]
+[assembly: Guid("cc09ed72-14d1-455d-8a89-8957d04f88ac")]
 
 // Version information for an assembly consists of the following four values:
 //

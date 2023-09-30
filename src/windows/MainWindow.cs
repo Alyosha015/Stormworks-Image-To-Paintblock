@@ -3,47 +3,71 @@ using System.IO;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 
 namespace ImageConverter {
     public partial class MainWindow : Form {
         private bool backgroundSelected = false;
         private bool glowSelected = false;
+        
         private string pathToBackground = "";
         private string pathToGlow = "";
+        
         private Bitmap backgroundImage = new Bitmap(1, 1);
         private Bitmap glowImage = new Bitmap(1, 1);
+        
         private bool settingsOpen = false;
+
         private bool generatingXML = false;
+
+        public int modeSelectIndex { get; private set; }
+        public int newWidth { private get; set; }
+        public int newHeight { private get; set; }
 
         public MainWindow() {
             InitializeComponent();
         }
 
         private void MainWindow_Load(object sender, EventArgs e) {
-            float dpi = CreateGraphics().DpiX;
+            Text = "Image Converter " + Settings.version;
+
             Icon = Icon.FromHandle(Properties.Resources.IconInverted.GetHicon());
-            if (!Settings.saveAndLoadPos) Location = new Point((int)(Settings.xPos * (dpi / 96)), (int)(Settings.yPos * (dpi / 96)));
-            else Location = new Point(Settings.xPos, Settings.yPos);
-            Text = "Image Converter "+Settings.version;
+            
+            if (!Settings.saveAndLoadPos) {
+                Location = new Point(Settings.xPos, Settings.yPos);
+                Screen s = Screen.FromPoint(Location);
+                Rectangle workingArea = s.WorkingArea;
+                Location = new Point() {
+                    X = Math.Max(workingArea.X, workingArea.X + (workingArea.Width - Width) / 2),
+                    Y = Math.Max(workingArea.Y, workingArea.Y + (workingArea.Height - Height) / 2)
+                };
+            } else {
+                Location = new Point(Settings.xPos, Settings.yPos);
+            }
+            
             KeyPreview = true;
             ModeSelect.SelectedIndex = 0;
 
-            if(dpi==96) {
+            if(CreateGraphics().DpiX == 96) {
                 CutoutLabel.Text = "Cutout Background?";
             }
         }
 
         private void OnClose(object sender, FormClosedEventArgs e) {
-            Settings.currentMonitor = Convert.ToInt32(Regex.Replace(Screen.FromControl(this).DeviceName, "[^0-9]", ""));
+            int currentMonitor = Array.IndexOf(Screen.AllScreens, Screen.FromControl(this)) + 1;
+            if (currentMonitor == 0) { // (check for 0 instead of -1 because 1 is added to the index on the line before)
+                currentMonitor = 1;
+            }
+
+            Settings.currentMonitor = currentMonitor;
             Settings.xPos = Location.X;
             Settings.yPos = Location.Y;
             Settings.SaveOnClose();
         }
 
         private void ModeChanged(object sender, EventArgs e) {
-            if(ModeSelect.SelectedIndex != 0 && (backgroundSelected || glowSelected) && !generatingXML) GenerateXML.Enabled = true;
-            else GenerateXML.Enabled = false;
+            GenerateXML.Enabled = ModeSelect.SelectedIndex != 0 && (backgroundSelected || glowSelected) && !generatingXML;
+            Ruler.Enabled = (backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0 && ModeSelect.SelectedIndex != 1 && ModeSelect.SelectedIndex != 4;
+            modeSelectIndex = ModeSelect.SelectedIndex;
             CalculateWidthHeight();
         }
 
@@ -56,13 +80,8 @@ namespace ImageConverter {
         }
 
         private void OptimizeCheckChange(object sender, EventArgs e) {
-            if (Optimize.Checked) {
-                Threshold.Enabled = true;
-                CutoutBackground.Enabled = true;
-            } else {
-                Threshold.Enabled = false;
-                CutoutBackground.Enabled = false;
-            }
+            Threshold.Enabled = Optimize.Checked;
+            CutoutBackground.Enabled = Optimize.Checked;
         }
 
         private void GlowCheckChanged(object sender, EventArgs e) {
@@ -138,8 +157,8 @@ namespace ImageConverter {
                 SelectBackground.ForeColor = Color.Gainsboro;
             }
             CalculateWidthHeight();
-            if ((backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0) GenerateXML.Enabled = true;
-            else GenerateXML.Enabled = false;
+            GenerateXML.Enabled = (backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0;
+            Ruler.Enabled = (backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0 && ModeSelect.SelectedIndex != 1 && ModeSelect.SelectedIndex != 4;
         }
 
         private void SelectGlowClick(object sender, EventArgs e) {
@@ -155,12 +174,12 @@ namespace ImageConverter {
             } else { glowSelected = false; glowImage = new Bitmap(1, 1); SelectGlow.ForeColor = Color.Gainsboro; }
             if (glowSelected && !backgroundSelected) backgroundImage = new Bitmap(glowImage);
             CalculateWidthHeight();
-            if ((backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0) GenerateXML.Enabled = true;
-            else GenerateXML.Enabled = false;
+            GenerateXML.Enabled = (backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0;
+            Ruler.Enabled = (backgroundSelected || (glowSelected && Glow.Checked)) && ModeSelect.SelectedIndex != 0 && ModeSelect.SelectedIndex != 1 && ModeSelect.SelectedIndex != 4;
         }
 
         private void UnsupportedFileChoosen(string path) {
-            MessageBox.Show("The file \"" + path + "\" is using a file format unsupported by the image converter. The supported formats are JPG, PNG, BMP, GIF (not animated), EXIF, and TIFF. If the image is one of those, it isn't saved under the format properly (for example, renaming the file extension doesn't work).\n\nTo fix the problem open the image in any image editing program of your choice (Paint or Paint 3D will work), and save the image with one of the supported formats.", "Unsupported File");
+            MessageBox.Show($"The file \"{path}\" is using a file format unsupported by the image converter. The supported formats are JPG, PNG, BMP, GIF (not animated), EXIF, and TIFF. If the image is one of those, it isn't saved under the format properly (for example, renaming the file extension doesn't work).\n\nTo fix the problem open the image in any image editing program of your choice (Paint or Paint 3D will work), and save the image with one of the supported formats.", "Unsupported File");
         }
 
         private void GenerateClick(object sender, EventArgs e) {
@@ -186,8 +205,8 @@ namespace ImageConverter {
             if (!backgroundSelected) backgroundImage = new Bitmap(glowImage);
             CalculateWidthHeight();
 
-            int newY = (int)Math.Max((((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)Width.Value * 9),1);
-            int newX = (int)Math.Max((((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)Height.Value * 9),1);
+            int newY = (int)Math.Max(((double)backgroundImage.Height / backgroundImage.Width) * (double)WidthUDC.Value * 9, 1);
+            int newX = (int)Math.Max(((double)backgroundImage.Width / backgroundImage.Height) * (double)HeightUDC.Value * 9, 1);
 
             Bitmap bgResized = null;
             Bitmap gResized = null;
@@ -195,13 +214,13 @@ namespace ImageConverter {
             Bitmap gBitmap = null;
 
             if (ModeSelect.SelectedIndex == 1) {
-                bgResized = new Bitmap(backgroundImage, (int)Width.Value * 9, (int)Height.Value * 9);
+                bgResized = new Bitmap(backgroundImage, (int)WidthUDC.Value * 9, (int)HeightUDC.Value * 9);
                 if(glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
             } else if (ModeSelect.SelectedIndex == 2) {
-                bgResized = new Bitmap(backgroundImage, (int)Width.Value * 9, newY);
+                bgResized = new Bitmap(backgroundImage, (int)WidthUDC.Value * 9, newY);
                 if (glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
             } else if (ModeSelect.SelectedIndex == 3) {
-                bgResized = new Bitmap(backgroundImage, newX, (int)Height.Value * 9);
+                bgResized = new Bitmap(backgroundImage, newX, (int)HeightUDC.Value * 9);
                 if (glow) gResized = new Bitmap(glowImage, bgResized.Width, bgResized.Height);
             } else if (ModeSelect.SelectedIndex == 4) {
                 bgResized = new Bitmap(backgroundImage);
@@ -238,21 +257,21 @@ namespace ImageConverter {
                     int widthDifference = bgBitmap.Width - bgResized.Width;
                     int heightDifference = bgBitmap.Height - bgResized.Height;
                     Util.SaveTextFile(
-                        new Generator().GenerateXML(bgBitmap, optimize, optimizationThreshold, cutout,
+                        new Generator().GeneratePaintableSign(bgBitmap, (double)PixelContrastUDC.Value, optimize, optimizationThreshold, cutout,
                             heightDifference - yOff, yOff,
                             widthDifference - xOff, xOff
                         ),
                         path
                     );
                 } else {
-                    Util.SaveTextFile(new Generator().GenerateXML(bgBitmap, gBitmap, Darken.Checked, backgroundSelected), path);
+                    Util.SaveTextFile(new Generator().GeneratePaintableIndicator(bgBitmap, gBitmap, (double)PixelContrastUDC.Value, Darken.Checked, backgroundSelected), path);
                 }
-                try {
-                    string thumbnailPath = path.Substring(0,path.Length - 4) + ".png";
-                    File.Copy("thumbnail.png", thumbnailPath, true);
-                } catch(Exception) {
-                    
+
+                if(File.Exists(Settings.thumbnailPath)) {
+                    string thumbnailPath = path.Substring(0, path.Length - 4) + ".png";
+                    File.Copy(Settings.thumbnailPath, thumbnailPath, true);
                 }
+                
                 bgResized = null;
                 gResized = null;
                 bgBitmap = null;
@@ -262,35 +281,56 @@ namespace ImageConverter {
             }
         }
 
+        private void RulerClick(object sender, EventArgs e) {
+            newWidth = 0;
+            newHeight = 0;
+            
+            new ScaleBySegment(this, backgroundImage).ShowDialog();
+            
+            if(ModeSelect.SelectedIndex == 2) {
+                if (newWidth == 0) {
+                    return;
+                }
+                WidthUDC.Value = newWidth;
+            } else if(ModeSelect.SelectedIndex == 3) {
+                if(newHeight == 0) {
+                    return;
+                }
+                HeightUDC.Value = newHeight;
+            }
+            
+            CalculateWidthHeight();
+        }
+
         private void CalculateWidthHeight() {
             if (backgroundSelected || glowSelected) {
                 if(ModeSelect.SelectedIndex==0) {
-                    Width.Enabled = false;
-                    Height.Enabled = false;
+                    WidthUDC.Enabled = false;
+                    HeightUDC.Enabled = false;
                 } else if(ModeSelect.SelectedIndex==1) {
-                    Width.Enabled = true;
-                    Height.Enabled = true;
+                    WidthUDC.Enabled = true;
+                    HeightUDC.Enabled = true;
                 } else if(ModeSelect.SelectedIndex==2) {
-                    Width.Enabled = true;
-                    Height.Enabled = false;
-                    double newHeight = ((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)Width.Value * 9;
-                    Height.Value = Math.Max((int)Math.Ceiling(Math.Floor(newHeight) / 9),1);
+                    WidthUDC.Enabled = true;
+                    HeightUDC.Enabled = false;
+                    double newHeight = ((double)backgroundImage.Height / (double)backgroundImage.Width) * (double)WidthUDC.Value * 9;
+                    HeightUDC.Value = Math.Max((int)Math.Ceiling(Math.Floor(newHeight) / 9), 1);
                 } else if(ModeSelect.SelectedIndex==3) {
-                    Width.Enabled = false;
-                    Height.Enabled = true;
-                    double newWidth = ((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)Height.Value * 9;
-                    Width.Value = Math.Max((int)Math.Ceiling(Math.Floor(newWidth) / 9),1);
+                    WidthUDC.Enabled = false;
+                    HeightUDC.Enabled = true;
+                    double newWidth = ((double)backgroundImage.Width / (double)backgroundImage.Height) * (double)HeightUDC.Value * 9;
+                    WidthUDC.Value = Math.Max((int)Math.Ceiling(Math.Floor(newWidth) / 9), 1);
                 } else if(ModeSelect.SelectedIndex==4) {
-                    Width.Enabled = false;
-                    Height.Enabled = false;
-                    Width.Value = (int)Math.Ceiling((double)backgroundImage.Width / 9);
-                    Height.Value = (int)Math.Ceiling((double)backgroundImage.Height / 9);
+                    WidthUDC.Enabled = false;
+                    HeightUDC.Enabled = false;
+                    WidthUDC.Value = (int)Math.Ceiling((double)backgroundImage.Width / 9);
+                    HeightUDC.Value = (int)Math.Ceiling((double)backgroundImage.Height / 9);
                 }
             } else {
-                Width.Enabled = false;
-                Height.Enabled = false;
-                Width.Value = 1;
-                Height.Value = 1;
+                WidthUDC.Enabled = false;
+                HeightUDC.Enabled = false;
+                WidthUDC.Value = 1;
+                HeightUDC.Value = 1;
             }
         }
 
@@ -311,6 +351,10 @@ namespace ImageConverter {
         }
 
         private void YOffsetKeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) e.SuppressKeyPress = true;
+        }
+
+        private void ContrastKeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) e.SuppressKeyPress = true;
         }
 

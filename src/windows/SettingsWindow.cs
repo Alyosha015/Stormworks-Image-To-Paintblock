@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageConverter.src.windows;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,13 +10,9 @@ namespace ImageConverter {
         }
 
         private void SettingsWindow_Load(object sender, EventArgs e) {
-            float dpi = CreateGraphics().DpiX;
             Icon = Icon.FromHandle(Properties.Resources.IconInverted.GetHicon());
-            Location = new Point(Settings.xPos,Settings.yPos);
+            Location = new Point(Settings.xPos, Settings.yPos);
             LoadSettings();
-            if(dpi==96) {
-                CenterWindowPosLabel.Text = "Load Window Centered";
-            }
         }
 
         private void UseImageNameAsVehicleName_CheckedChanged(object sender, EventArgs e) {
@@ -41,12 +38,16 @@ namespace ImageConverter {
             LoadSettings();
         }
 
+        private void CheckForUpdates_Click(object sender, EventArgs e) {
+            UpdateCheck updateCheckWindow = new UpdateCheck();
+            updateCheckWindow.ShowDialog();
+        }
+
         private void LoadSettings() {
             VehicleFolderPath.Text = Settings.vehicleFolderPath;
             VehicleOutputName.Text = Settings.vehicleOutputName;
             UseImageNameAsVehicleName.Checked = Settings.useImageNameAsVehicleName;
-            if (Settings.useImageNameAsVehicleName) VehicleOutputName.Enabled = false;
-            else VehicleOutputName.Enabled = true;
+            VehicleOutputName.Enabled = !Settings.useImageNameAsVehicleName;
             Backup.Checked = Settings.doBackups;
             MaxBackups.Value = Settings.backupCount;
             SaveWindowPos.Checked = !Settings.saveAndLoadPos;

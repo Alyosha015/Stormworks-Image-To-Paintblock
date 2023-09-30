@@ -38,6 +38,7 @@ namespace ImageConverter {
             this.Save = new System.Windows.Forms.Button();
             this.Reset = new System.Windows.Forms.Button();
             this.SaveWindowPos = new System.Windows.Forms.CheckBox();
+            this.CheckForUpdates = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MaxBackups)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,7 +60,7 @@ namespace ImageConverter {
             this.VehicleOutputName.ForeColor = System.Drawing.Color.Gainsboro;
             this.VehicleOutputName.Location = new System.Drawing.Point(5, 40);
             this.VehicleOutputName.Name = "VehicleOutputName";
-            this.VehicleOutputName.Size = new System.Drawing.Size(135, 30);
+            this.VehicleOutputName.Size = new System.Drawing.Size(375, 30);
             this.VehicleOutputName.TabIndex = 1;
             this.VehicleOutputName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.VehicleOutputNameKeyDown);
             // 
@@ -69,7 +70,7 @@ namespace ImageConverter {
             this.UseImageNameAsVehicleName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
             this.UseImageNameAsVehicleName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.UseImageNameAsVehicleName.ForeColor = System.Drawing.Color.Gainsboro;
-            this.UseImageNameAsVehicleName.Location = new System.Drawing.Point(365, 49);
+            this.UseImageNameAsVehicleName.Location = new System.Drawing.Point(366, 78);
             this.UseImageNameAsVehicleName.Name = "UseImageNameAsVehicleName";
             this.UseImageNameAsVehicleName.Size = new System.Drawing.Size(14, 13);
             this.UseImageNameAsVehicleName.TabIndex = 11;
@@ -79,22 +80,22 @@ namespace ImageConverter {
             // UseImageNameLabel
             // 
             this.UseImageNameLabel.AutoSize = true;
-            this.UseImageNameLabel.Font = new System.Drawing.Font("Arial", 9.5F);
+            this.UseImageNameLabel.Font = new System.Drawing.Font("Arial", 9F);
             this.UseImageNameLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.UseImageNameLabel.Location = new System.Drawing.Point(140, 46);
+            this.UseImageNameLabel.Location = new System.Drawing.Point(167, 75);
             this.UseImageNameLabel.Name = "UseImageNameLabel";
-            this.UseImageNameLabel.Size = new System.Drawing.Size(215, 18);
+            this.UseImageNameLabel.Size = new System.Drawing.Size(201, 17);
             this.UseImageNameLabel.TabIndex = 12;
             this.UseImageNameLabel.Text = "Use Image Filename Instead?";
             // 
             // BackupLabel
             // 
             this.BackupLabel.AutoSize = true;
-            this.BackupLabel.Font = new System.Drawing.Font("Arial", 10F);
+            this.BackupLabel.Font = new System.Drawing.Font("Arial", 10.5F);
             this.BackupLabel.ForeColor = System.Drawing.Color.Gainsboro;
             this.BackupLabel.Location = new System.Drawing.Point(1, 75);
             this.BackupLabel.Name = "BackupLabel";
-            this.BackupLabel.Size = new System.Drawing.Size(139, 19);
+            this.BackupLabel.Size = new System.Drawing.Size(151, 21);
             this.BackupLabel.TabIndex = 13;
             this.BackupLabel.Text = "Backup Vehicles?";
             // 
@@ -115,7 +116,7 @@ namespace ImageConverter {
             this.BackupCountLabel.AutoSize = true;
             this.BackupCountLabel.Font = new System.Drawing.Font("Arial", 10F);
             this.BackupCountLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.BackupCountLabel.Location = new System.Drawing.Point(1, 103);
+            this.BackupCountLabel.Location = new System.Drawing.Point(1, 101);
             this.BackupCountLabel.Name = "BackupCountLabel";
             this.BackupCountLabel.Size = new System.Drawing.Size(106, 19);
             this.BackupCountLabel.TabIndex = 15;
@@ -126,7 +127,7 @@ namespace ImageConverter {
             this.CenterWindowPosLabel.AutoSize = true;
             this.CenterWindowPosLabel.Font = new System.Drawing.Font("Arial", 7.5F);
             this.CenterWindowPosLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.CenterWindowPosLabel.Location = new System.Drawing.Point(1, 132);
+            this.CenterWindowPosLabel.Location = new System.Drawing.Point(1, 127);
             this.CenterWindowPosLabel.Name = "CenterWindowPosLabel";
             this.CenterWindowPosLabel.Size = new System.Drawing.Size(148, 16);
             this.CenterWindowPosLabel.TabIndex = 16;
@@ -138,7 +139,7 @@ namespace ImageConverter {
             this.MaxBackups.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.MaxBackups.Font = new System.Drawing.Font("Arial", 10F);
             this.MaxBackups.ForeColor = System.Drawing.Color.Gainsboro;
-            this.MaxBackups.Location = new System.Drawing.Point(113, 100);
+            this.MaxBackups.Location = new System.Drawing.Point(113, 98);
             this.MaxBackups.Maximum = new decimal(new int[] {
             99,
             0,
@@ -166,9 +167,9 @@ namespace ImageConverter {
             this.OpenBackups.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.OpenBackups.Font = new System.Drawing.Font("Arial", 11F);
             this.OpenBackups.ForeColor = System.Drawing.Color.Gainsboro;
-            this.OpenBackups.Location = new System.Drawing.Point(169, 73);
+            this.OpenBackups.Location = new System.Drawing.Point(168, 103);
             this.OpenBackups.Name = "OpenBackups";
-            this.OpenBackups.Size = new System.Drawing.Size(211, 47);
+            this.OpenBackups.Size = new System.Drawing.Size(211, 38);
             this.OpenBackups.TabIndex = 19;
             this.OpenBackups.Text = "Open Backups Folder";
             this.OpenBackups.UseVisualStyleBackColor = false;
@@ -181,7 +182,7 @@ namespace ImageConverter {
             this.Close.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Close.Font = new System.Drawing.Font("Arial", 10F);
             this.Close.ForeColor = System.Drawing.Color.Gainsboro;
-            this.Close.Location = new System.Drawing.Point(169, 125);
+            this.Close.Location = new System.Drawing.Point(168, 146);
             this.Close.Name = "Close";
             this.Close.Size = new System.Drawing.Size(67, 28);
             this.Close.TabIndex = 20;
@@ -196,7 +197,7 @@ namespace ImageConverter {
             this.Save.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Save.Font = new System.Drawing.Font("Arial", 10F);
             this.Save.ForeColor = System.Drawing.Color.Gainsboro;
-            this.Save.Location = new System.Drawing.Point(241, 125);
+            this.Save.Location = new System.Drawing.Point(240, 146);
             this.Save.Name = "Save";
             this.Save.Size = new System.Drawing.Size(67, 28);
             this.Save.TabIndex = 21;
@@ -211,7 +212,7 @@ namespace ImageConverter {
             this.Reset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Reset.Font = new System.Drawing.Font("Arial", 10F);
             this.Reset.ForeColor = System.Drawing.Color.Gainsboro;
-            this.Reset.Location = new System.Drawing.Point(313, 125);
+            this.Reset.Location = new System.Drawing.Point(312, 146);
             this.Reset.Name = "Reset";
             this.Reset.Size = new System.Drawing.Size(67, 28);
             this.Reset.TabIndex = 22;
@@ -225,18 +226,34 @@ namespace ImageConverter {
             this.SaveWindowPos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
             this.SaveWindowPos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SaveWindowPos.ForeColor = System.Drawing.Color.Gainsboro;
-            this.SaveWindowPos.Location = new System.Drawing.Point(148, 133);
+            this.SaveWindowPos.Location = new System.Drawing.Point(148, 128);
             this.SaveWindowPos.Name = "SaveWindowPos";
             this.SaveWindowPos.Size = new System.Drawing.Size(14, 13);
             this.SaveWindowPos.TabIndex = 23;
             this.SaveWindowPos.UseVisualStyleBackColor = false;
+            // 
+            // CheckForUpdates
+            // 
+            this.CheckForUpdates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(80)))));
+            this.CheckForUpdates.FlatAppearance.BorderSize = 0;
+            this.CheckForUpdates.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CheckForUpdates.Font = new System.Drawing.Font("Arial", 9F);
+            this.CheckForUpdates.ForeColor = System.Drawing.Color.Gainsboro;
+            this.CheckForUpdates.Location = new System.Drawing.Point(5, 146);
+            this.CheckForUpdates.Name = "CheckForUpdates";
+            this.CheckForUpdates.Size = new System.Drawing.Size(158, 28);
+            this.CheckForUpdates.TabIndex = 24;
+            this.CheckForUpdates.Text = "Check For Updates";
+            this.CheckForUpdates.UseVisualStyleBackColor = false;
+            this.CheckForUpdates.Click += new System.EventHandler(this.CheckForUpdates_Click);
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(38)))));
-            this.ClientSize = new System.Drawing.Size(385, 159);
+            this.ClientSize = new System.Drawing.Size(385, 183);
+            this.Controls.Add(this.CheckForUpdates);
             this.Controls.Add(this.SaveWindowPos);
             this.Controls.Add(this.Reset);
             this.Controls.Add(this.Save);
@@ -278,5 +295,6 @@ namespace ImageConverter {
         private System.Windows.Forms.Button Save;
         private System.Windows.Forms.Button Reset;
         private System.Windows.Forms.CheckBox SaveWindowPos;
+        private System.Windows.Forms.Button CheckForUpdates;
     }
 }

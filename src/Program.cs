@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace ImageConverter {
@@ -8,15 +10,23 @@ namespace ImageConverter {
         /// </summary>
         [STAThread]
         static void Main() {
-            Settings.LoadSettings();
-            Backups.CheckForBackupsDirectory();
-            if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+            try {
+                Settings.LoadSettings();
+                Backups.CheckForBackupsDirectory();
+                SetProcessDPIAware();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainWindow());
+            } catch (Exception ex) {
+                MessageBox.Show("Please report it and include 'error.txt'.", "An error occured.");
+                StreamWriter sw = new StreamWriter("error.txt");
+                sw.WriteLine(ex.Message);
+                sw.WriteLine(ex.StackTrace);
+                sw.Close();
+            }            
         }
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern bool SetProcessDPIAware();
+        [DllImport("user32.dll")]
+        internal static extern bool SetProcessDPIAware();
     }
 }
