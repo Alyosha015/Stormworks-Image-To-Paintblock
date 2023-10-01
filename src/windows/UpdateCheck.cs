@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -22,7 +21,7 @@ namespace ImageConverter.src.windows {
 
             if (version == null) {
                 StatusLabel.Text = "An error occurred.";
-            } else if (string.Equals(version, Settings.version)) {
+            } else if (string.Equals(version, Settings.tag)) {
                 StatusLabel.Text = "Currently on latest version.";
             } else {
                 StatusLabel.Text = $"Newer version available. ({version})";
@@ -40,9 +39,12 @@ namespace ImageConverter.src.windows {
                 try {
                     client.Headers.Add("user-agent", "request");
                     string jsonStr = client.DownloadString("https://api.github.com/repos/Alyosha015/Stormworks-Image-To-Paintblock/releases/latest");
-                    JsonDocument json = JsonDocument.Parse(jsonStr);
-                    latestReleaseTag = json.RootElement.GetProperty("tag_name").GetString();
-                } catch (Exception ex) {
+                    //I don't want to have an entire json library worth of dlls in the release, so I this is meant to get the tag_name value instead.
+                    int index = jsonStr.IndexOf("\"tag_name\":");
+                    string afterTagName = jsonStr.Substring(index + 11);
+                    string afterTagValue = afterTagName.Substring(afterTagName.IndexOf('\"') + 1);
+                    latestReleaseTag = afterTagValue.Substring(0, afterTagValue.IndexOf('\"'));
+                } catch (Exception) {
                     return null;
                 }
             }

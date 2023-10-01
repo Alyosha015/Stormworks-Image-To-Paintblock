@@ -7,6 +7,7 @@ using System.Windows.Forms;
 namespace ImageConverter {
     class Settings {
         public static string version = "v1.8.0";
+        public static string tag = "v1.8.0.1";
 
         public static string settingsPath = "settings.xml";
         public static string thumbnailPath = "thumbnail.png";
@@ -81,7 +82,7 @@ namespace ImageConverter {
             using (XmlTextWriter writer = new XmlTextWriter(settingsPath, Encoding.UTF8)) {
                 writer.Formatting = Formatting.Indented;
                 writer.WriteStartElement("settings");
-                writer.WriteElementString("version", version);
+                writer.WriteElementString("version", tag);
                 writer.WriteElementString("vehicleFolderPath", vehicleFolderPath);
                 writer.WriteElementString("useImageNameAsVehicleName", useImageNameAsVehicleName.ToString());
                 writer.WriteElementString("vehicleOutputName", vehicleOutputName);
@@ -100,7 +101,7 @@ namespace ImageConverter {
             using (XmlTextWriter writer = new XmlTextWriter(settingsPath, Encoding.UTF8)) {
                 writer.Formatting = Formatting.Indented;
                 writer.WriteStartElement("settings");
-                writer.WriteElementString("version", version);
+                writer.WriteElementString("version", tag);
                 writer.WriteElementString("vehicleFolderPath", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Stormworks\data\vehicles\");
                 writer.WriteElementString("useImageNameAsVehicleName", false.ToString());
                 writer.WriteElementString("vehicleOutputName", "Generated.xml");
